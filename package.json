@@ -1,0 +1,29 @@
+{
+  "name": "discord-utils-bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/sharding.js",
+  "scripts": {
+    "start": "node ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SoF-MC/discord-utils-bot.git"
+  },
+  "author": "",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/SoF-MC/discord-utils-bot/issues"
+  },
+  "homepage": "https://github.com/SoF-MC/discord-utils-bot#readme",
+  "dependencies": {
+    "bufferutil": "^4.0.3",
+    "chalk": "^4.1.2",
+    "discord.js": "^12.5.3",
+    "express": "^4.17.1",
+    "mongoose": "^5.13.3",
+    "systeminformation": "^5.8.6",
+    "utf-8-validate": "^5.0.5",
+    "minecraft-server-util": "^3.6.0"
+  }
+}
