@@ -7,16 +7,17 @@ module.exports = {
     checkArgs: (args) => args.length == 2
 };
 
+const config = require("../../config");
 const mcUtil = require("minecraft-server-util");
-const rcon = new mcUtil.RCON("play.soff.ml", { port: 25598, password: "buildsrvkek" });
+const rcon = new mcUtil.RCON("play.soff.ml", { port: 25598, password: config.passwords.rcon.build });
 
 module.exports.run = async (message, args) => {
     let nickname = args[0];
     let member = await message.guild.members.fetch(args[1]).catch(async () => {
         return message.reply("❌ Не удалось найти пользователя с этим ID.").then(m => setTimeout(() => {
-            message.delete();
-            m.delete();
-        }, 2000));
+            message.delete().catch();
+            m.delete().catch();
+        }, 2000)).catch();
     });
     const m = await message.reply("Работаю...");
 
@@ -49,19 +50,19 @@ module.exports.run = async (message, args) => {
                     }
                 ]
             }
-        }).then(() => message.channel.edit({ name: "build-" + message.channel.name.split("-")[1] }));
+        }).then(() => message.channel.edit({ name: "build-" + message.channel.name.split("-")[1] }).catch()).catch();
         rcon.close();
     });
 
     let newNick = member.user.username.substr(0, 26 - nickname.length).trim() + " | " + nickname;
 
-    await member.setNickname(newNick).then(() => m.edit("✅ Ник успешно установлен."));
+    await member.setNickname(newNick).then(() => m.edit("✅ Ник успешно установлен.").catch());
 
     await gldb.setOnObject("nicknames", member.user.id, nickname);
-    await m.edit(m.content + "\n✅ Ник пользователя успешно внесён в базу данных.");
+    await m.edit(m.content + "\n✅ Ник пользователя успешно внесён в базу данных.").catch();
 
     await rcon.connect().then(() => {
-        m.edit(m.content + "\n✅ Запрос на добавление в вайтлист был отправлен.");
+        m.edit(m.content + "\n✅ Запрос на добавление в вайтлист был отправлен.").catch();
         rcon.run("easywhitelist add " + nickname);
     }).catch(err => {
         log.error(err);
