@@ -2,8 +2,8 @@ const chalk = require("chalk");
 
 const logger = (mode) => {
     return (...args) => {
-        let output = args.join(" "),
-            timeFormatted = new Date().toLocaleTimeString("ru-RU", { hour12: false });
+        let output = args.join(" ");
+        const timeFormatted = new Date().toLocaleTimeString("ru-RU", { hour12: false });
 
         switch (mode) {
             case 0:
