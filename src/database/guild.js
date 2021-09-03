@@ -4,7 +4,8 @@ const dbCache = new Map(), dbSaveQueue = new Map();
 
 const guildObject = {
     guildid: "",
-    prefix: ""
+    prefix: "",
+    privateVoices: {}
 };
 
 const guildSchema = mongoose.Schema(JSON.parse(JSON.stringify(guildObject)), { minimize: true }); // make a copy of guildObject
@@ -89,8 +90,8 @@ module.exports.cacheAll = async (guilds = new Set()) => {
         let
             guild = gdbs.find(db => db.guildid == guildid) || { guildid },
             guildCache = {},
-            freshGuildObject = JSON.parse(JSON.stringify(guildObject)); // make a fresh one, to not make duplicates across guilds (for example on arrays and objects)
-        for (const key in freshGuildObject) guildCache[key] = guild[key] || freshGuildObject[key]; // if there's no value stored in the guild database then we use the default value
+            freshGuildObject = JSON.parse(JSON.stringify(guildObject));
+        for (const key in freshGuildObject) guildCache[key] = guild[key] || freshGuildObject[key];
         return dbCache.set(guildid, guildCache);
     }));
 };

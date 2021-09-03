@@ -1,21 +1,20 @@
 require("./extendedMessage");
-const
-    Discord = require("discord.js"),
-    config = require("../config"),
-    commandHandler = require("./handlers/commands"),
-    client = new Discord.Client({
-        partials: ["GUILD_MEMBER", "MESSAGE"],
-        presence: {
-            status: "dnd",
-            activity: {
-                type: "WATCHING",
-                name: "загрузочный экран"
-            }
+const Discord = require("discord.js");
+const config = require("../config");
+const commandHandler = require("./handlers/commands");
+const client = new Discord.Client({
+    partials: ["GUILD_MEMBER", "MESSAGE"],
+    presence: {
+        status: "dnd",
+        activity: {
+            type: "WATCHING",
+            name: "загрузочный экран"
         }
-    }),
-    log = require("./handlers/logger"),
-    fs = require("fs"),
-    db = require("./database/")();
+    }
+});
+const log = require("./handlers/logger");
+const fs = require("fs");
+const db = require("./database/")();
 
 global.sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 global.getInvite = require("./constants/").getInvite;
@@ -52,7 +51,9 @@ client.once("shardReady", async (shardid, unavailable = new Set()) => {
     await updatePresence();
     client.setInterval(updatePresence, 10000); // 10 seconds
 
-    fs.readdir("./src/modules", (err, files) => err ? console.log(err) : files.filter(file => file.endsWith(".js")).forEach(file => require(`./modules/${file}`)(client)));
+    fs.readdir("./src/modules", (err, files) => {
+        err ? log.error(err) : files.filter(file => file.endsWith(".js")).forEach(file => require(`./modules/${file}`)(client));
+    });
 });
 
 client.on("message", async message => {

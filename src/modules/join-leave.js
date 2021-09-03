@@ -1,9 +1,9 @@
-const { Client, GuildMember } = require("discord.js");
+const { Client } = require("discord.js");
 
 module.exports = (client = new Client) => {
     const guild = client.guilds.cache.get("764178286233518100");
 
-    client.on("guildMemberAdd", async (member = new GuildMember) => {
+    client.on("guildMemberAdd", (member) => {
         if (member.guild.id !== guild.id) return;
 
         member.roles.add([
