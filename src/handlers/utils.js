@@ -8,11 +8,11 @@ module.exports.deleteMessage = (message = new Message) => {
 
     const bulk = bulks.get(message.channel.id) || [];
     if (bulk.length) bulk.push(message);
-    else if (rate < 4) message.delete();
+    else if (rate < 4) message.delete().catch();
     else {
         bulks.set(message.channel.id, [message]);
         setTimeout(() => {
-            message.channel.bulkDelete(bulks.get(message.channel.id));
+            message.channel.bulkDelete(bulks.get(message.channel.id)).catch();
             bulks.delete(message.channel.id);
         }, 5000);
     };

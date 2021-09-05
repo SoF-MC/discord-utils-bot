@@ -19,10 +19,10 @@ class ExtAPIMessage extends APIMessage {
 
 class Message extends Structures.get("Message") {
     reply(content, options) {
-        return this.channel.send(ExtAPIMessage.create(this, content, options, { replyTo: this }).resolveData());
+        return this.channel.send(ExtAPIMessage.create(this, content, options, { replyTo: this }).resolveData()).catch();
     };
     edit(content, options) {
-        return super.edit(ExtAPIMessage.create(this, content, options).resolveData());
+        return super.edit(ExtAPIMessage.create(this, content, options).resolveData()).catch();
     };
 };
 

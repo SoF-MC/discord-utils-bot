@@ -1,8 +1,4 @@
-const
-    Discord = require("discord.js"),
-    config = require("../config"),
-    express = require("express"),
-    log = require("./handlers/logger");
+const Discord = require("discord.js"), config = require("../config"), log = require("./handlers/logger");
 
 const manager = new Discord.ShardingManager("./src/bot.js", {
     totalShards: config.shards || "auto",
@@ -23,7 +19,7 @@ manager.on("shardCreate", shard => {
 let botInfo = {};
 
 if (config.port) {
-    const api = express();
+    const api = require("express")();
 
     setInterval(updateBotInfo, 5000);
 
@@ -57,4 +53,4 @@ async function updateBotInfo() {
     return botInfo = newBotInfo;
 };
 
-manager.spawn(config.shards || "auto", 3000);
+manager.spawn(config.shards || "auto", 5000);

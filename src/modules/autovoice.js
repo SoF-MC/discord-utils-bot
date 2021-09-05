@@ -7,17 +7,23 @@ module.exports = async (client = new Client) => {
     const guildDB = await db.guild(guild.id);
 
     client.on("voiceStateUpdate", async (oldMember, newMember) => {
-        if (oldMember.channelID == newMember.channelID) return;
+        if (
+            oldMember.channelID == newMember.channelID
+        ) return;
 
-        if (!guildDB.get().privateVoices[newMember.member.user.id] && newMember.channelID == "782603037948641302") {
+        if (!guildDB.get().privateVoices[newMember.member.user.id] && newMember.channelID == createChannel.id) {
             const newChannel = await guild.channels.create("Канал " + newMember.member.user.tag.match(/[a-zа-яёії0-9# ]/gi).join("").trim(), {
                 type: "voice",
                 parent: "791184368857120819",
                 permissionOverwrites: [
                     {
                         id: newMember.member.user.id,
-                        allow: ["CONNECT", "SPEAK", "PRIORITY_SPEAKER"]
-                    }
+                        allow: ["CONNECT", "SPEAK", "PRIORITY_SPEAKER", "STREAM"]
+                    },
+                    {
+                        id: "764420934991478784",
+                        deny: ["SPEAK", "STREAM"]
+                    },
                 ]
             });
 

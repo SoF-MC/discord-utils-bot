@@ -24,6 +24,7 @@
     "mongoose": "^5.13.3",
     "systeminformation": "^5.8.6",
     "utf-8-validate": "^5.0.5",
-    "minecraft-server-util": "^3.6.0"
+    "minecraft-server-util": "^3.6.0",
+    "spam-detection": "1.0.3"
   }
 }

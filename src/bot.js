@@ -62,7 +62,8 @@ client.on("message", async message => {
     if (
         !message.guild ||
         message.author.bot ||
-        message.type !== "DEFAULT"
+        message.type !== "DEFAULT" ||
+        message.channel.id == "807466325533523970"
     ) return;
 
     const gdb = await db.guild(message.guild.id);
