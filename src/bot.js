@@ -26,7 +26,7 @@ global.root = __dirname;
 global.client = client;
 global.log = log;
 global.db = db;
-client.deleteMessage = require("./handlers/utils").deleteMessage;
+client.delMsg = require("./handlers/utils").deleteMessage;
 
 let shard = "[Shard N/A]";
 
