@@ -13,6 +13,8 @@ module.exports.run = async (message, args) => {
 		let evaled = await eval(content);
 		if (typeof evaled !== "string") evaled = require("util").inspect(evaled);
 
+		if (String(evaled).length >= 4000) return message.react("✅");
+
 		message.channel.send(evaled, { code: "js", split: true }).catch();
 	} catch (e) {
 		let err;
