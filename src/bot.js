@@ -20,6 +20,7 @@ global.sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 global.getInvite = require("./constants/").getInvite;
 global.msToTime = require("./constants/").msToTime;
 global.plurify = require("./constants/").plurify;
+global.exec = require("child_process").exec;
 global.si = require("systeminformation");
 global.fetch = require("node-fetch");
 global.root = __dirname;
