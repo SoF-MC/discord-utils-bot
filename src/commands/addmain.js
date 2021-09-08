@@ -60,6 +60,7 @@ module.exports.run = async (message, args) => {
                 "855498133508456507"        // nezayavki
             ]).catch();
         }).catch();
+
         rcon.close();
     });
 
