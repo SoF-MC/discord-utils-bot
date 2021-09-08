@@ -10,21 +10,22 @@ module.exports = {
 const config = require("../../config");
 const mcUtil = require("minecraft-server-util");
 const rcon = new mcUtil.RCON("play.soff.ml", { port: 25598, password: config.passwords.rcon.build });
+const { deleteMessage } = require("../handlers/utils");
 
 module.exports.run = async (message, args) => {
     let nickname = args[0];
     let member = await message.guild.members.fetch(args[1]).catch(async () => {
         return message.reply("❌ Не удалось найти пользователя с этим ID.").then(m => setTimeout(() => {
-            message.delete().catch();
-            m.delete().catch();
+            deleteMessage(message);
+            deleteMessage(m);
         }, 2000)).catch();
     });
     const m = await message.reply("Работаю...");
 
     rcon.on("output", async res => {
         await m.edit(m.content + `\nОтвет: ||${res}||\n**Это сообщение будет удалено через 30 секунд.**`).then(() => setTimeout(async () => {
-            await message.delete();
-            await m.delete();
+            deleteMessage(message);
+            deleteMessage(m);
         }, 30000));
         message.channel.send(member.user.toString(), {
             embed: {

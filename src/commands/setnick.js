@@ -7,12 +7,14 @@ module.exports = {
     checkArgs: (args) => args.length == 2 || (args.length == 3 && args[2] === "-nn")
 };
 
+const { deleteMessage } = require("../handlers/utils");
+
 module.exports.run = async (message, args) => {
     let nickname = args[1];
     let member = await message.guild.members.fetch(args[0]).catch(async () => {
         message.reply("❌ Не удалось найти пользователя с этим ID.").then(m => setTimeout(() => {
-            message.delete();
-            m.delete();
+            deleteMessage(message);
+            deleteMessage(m);
         }, 2000));
     });
 
