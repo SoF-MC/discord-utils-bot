@@ -56,7 +56,8 @@ module.exports.run = async (message, args) => {
             member.roles.add([
                 "764180192829767750",       // member
                 "790834431849791508",       // flex
-                "791657594228965377"        // sof player
+                "791657594228965377",       // sof player
+                "855498133508456507"        // nezayavki
             ]).catch();
         }).catch();
         rcon.close();
