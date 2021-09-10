@@ -47,9 +47,9 @@ module.exports.run = async (message, args) => {
                     }
                 ]
             }
-        }).then(() => {
+        }).then(async () => {
             message.channel.edit({ name: "main-" + message.channel.name.split("-")[1] }).catch();
-            let member = message.guild.members.fetch(args[0]);
+            let member = await message.guild.members.fetch(args[0]);
             member.roles.remove([
                 "764180408056414289"        // guest
             ]).catch();
