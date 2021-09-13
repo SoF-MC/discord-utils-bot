@@ -10,8 +10,15 @@ module.exports = async (client = new Client) => {
         if (
             oldMember.channelID == newMember.channelID
         ) return;
+        if (
+            newMember.channel == createChannel &&
+            !!guildDB.get().privateVoices[newMember.member.user.id]
+        ) return newMember.setChannel(null);
 
-        if (!guildDB.get().privateVoices[newMember.member.user.id] && newMember.channelID == createChannel.id) {
+        if (
+            !guildDB.get().privateVoices[newMember.member.user.id] &&
+            newMember.channelID == createChannel.id
+        ) {
             const newChannel = await guild.channels.create("Канал " + newMember.member.user.tag.match(/[a-zа-яёії0-9# ]/gi).join("").trim(), {
                 type: "voice",
                 parent: "791184368857120819",
@@ -30,7 +37,10 @@ module.exports = async (client = new Client) => {
             await guildDB.setOnObject("privateVoices", newMember.member.user.id, newChannel.id);
 
             return newMember.setChannel(newChannel.id);
-        } else if (!!guildDB.get().privateVoices[newMember.member.user.id] && oldMember.channelID == guildDB.get().privateVoices[newMember.member.user.id]) {
+        } else if (
+            !!guildDB.get().privateVoices[newMember.member.user.id] &&
+            oldMember.channelID == guildDB.get().privateVoices[newMember.member.user.id]
+        ) {
             await guild.channels.cache.get(guildDB.get().privateVoices[oldMember.member.user.id]).delete();
             return guildDB.removeFromObject("privateVoices", oldMember.member.user.id);
         };
