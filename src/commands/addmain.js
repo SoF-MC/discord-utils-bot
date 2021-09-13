@@ -1,6 +1,8 @@
 module.exports = {
     description: "привет :D",
-    usage: {},
+    usage: {
+        "<ID>": "Айди пользователя."
+    },
     examples: {},
     aliases: [],
     permissionRequired: 1, // 0 All, 1 Admins, 2 Server Owner, 3 Bot Admin, 4 Bot Owner

@@ -1,6 +1,9 @@
 module.exports = {
     description: "привет :D",
-    usage: {},
+    usage: {
+        "<ник>": "Ник игрока.",
+        "<ID>": "Айди пользователя."
+    },
     examples: {},
     aliases: [],
     permissionRequired: 1, // 0 All, 1 Admins, 2 Server Owner, 3 Bot Admin, 4 Bot Owner
@@ -14,12 +17,13 @@ const { deleteMessage } = require("../handlers/utils");
 
 module.exports.run = async (message, args) => {
     let nickname = args[0];
-    let member = await message.guild.members.fetch(args[1]).catch(async () => {
-        return message.reply("❌ Не удалось найти пользователя с этим ID.").then(m => setTimeout(() => {
-            deleteMessage(message);
-            deleteMessage(m);
-        }, 2000)).catch();
-    });
+    let member = await message.guild.members.fetch(args[1]);
+
+    if (!member) return message.reply("❌ Не удалось найти пользователя с этим ID.").then(m => setTimeout(() => {
+        deleteMessage(message);
+        deleteMessage(m);
+    }, 2000)).catch();
+
     const m = await message.reply("Работаю...");
 
     rcon.on("output", async res => {
