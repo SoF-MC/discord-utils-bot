@@ -52,10 +52,10 @@ module.exports.run = async (message, args) => {
         }).then(async () => {
             message.channel.edit({ name: "main-" + message.channel.name.split("-")[1] }).catch();
             let member = await message.guild.members.fetch(args[0]);
-            member.roles.remove([
+            await member.roles.remove([
                 "764180408056414289"        // guest
             ]).catch();
-            member.roles.add([
+            await member.roles.add([
                 "764180192829767750",       // member
                 "790834431849791508",       // flex
                 "791657594228965377",       // sof player
