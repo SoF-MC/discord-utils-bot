@@ -1,26 +1,16 @@
 const chalk = require("chalk");
 
-const logger = (mode) => {
-    return (...args) => {
-        let output = args.join(" ");
-        const timeFormatted = new Date().toLocaleTimeString("ru-RU", { hour12: false });
-
-        switch (mode) {
-            case 0:
-                console.log(chalk.whiteBright(`[${timeFormatted} - INFO] ` + output));
-                break;
-            case 1:
-                console.log(chalk.yellowBright(`[${timeFormatted} - WARN] ` + output));
-                break;
-            case 2:
-                console.log(chalk.redBright(`[${timeFormatted} - ERROR] ` + output));
-                break;
-        };
-    };
-};
-
 module.exports = {
-    log: logger(0),
-    warn: logger(1),
-    error: logger(2)
+    log: (output) => {
+        const timeFormatted = new Date().toLocaleTimeString("ru-RU", { hour12: false });
+        console.log(chalk.whiteBright(`[${timeFormatted} - INFO]`, output));
+    },
+    warn: (output) => {
+        const timeFormatted = new Date().toLocaleTimeString("ru-RU", { hour12: false });
+        console.log(chalk.yellowBright(`[${timeFormatted} - WARN]`, output));
+    },
+    error: (output) => {
+        const timeFormatted = new Date().toLocaleTimeString("ru-RU", { hour12: false });
+        console.log(chalk.redBright(`[${timeFormatted} - ERROR]`, output));
+    }
 };

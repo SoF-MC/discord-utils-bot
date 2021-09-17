@@ -5,7 +5,8 @@ const dbCache = new Map(), dbSaveQueue = new Map();
 const guildObject = {
     guildid: "",
     prefix: "",
-    privateVoices: {}
+    privateVoices: {},
+    mutes: {}
 };
 
 const guildSchema = mongoose.Schema(JSON.parse(JSON.stringify(guildObject)), { minimize: true }); // make a copy of guildObject

@@ -8,6 +8,7 @@ module.exports = {
             main: ""
         }
     },
+    SSH: {},
     color: "5539cc",
     prefix: "p!",
     shards: 1,

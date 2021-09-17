@@ -10,10 +10,6 @@ module.exports = async (client = new Client) => {
         if (
             oldMember.channelID == newMember.channelID
         ) return;
-        if (
-            newMember.channel == createChannel &&
-            !!guildDB.get().privateVoices[newMember.member.user.id]
-        ) return newMember.setChannel(null);
 
         if (
             !guildDB.get().privateVoices[newMember.member.user.id] &&

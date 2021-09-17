@@ -3,7 +3,8 @@ const mongoose = require("mongoose");
 const dbCache = new Map(), dbSaveQueue = new Map();
 
 const globalObject = {
-    nicknames: {}
+    nicknames: {},
+    domains: []
 };
 
 const globalSchema = mongoose.Schema(JSON.parse(JSON.stringify(globalObject)), { minimize: true });
