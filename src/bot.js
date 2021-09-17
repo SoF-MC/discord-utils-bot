@@ -15,6 +15,7 @@ const client = new Discord.Client({
 const log = require("./handlers/logger");
 const fs = require("fs");
 const db = require("./database/")();
+const { deleteMessage } = require("./handlers/utils");
 
 global.sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 global.getInvite = require("./constants/").getInvite;
@@ -64,13 +65,14 @@ client.on("message", async message => {
     if (
         !message.guild ||
         message.author.bot ||
-        message.type !== "DEFAULT" ||
-        message.channel.id == "807466325533523970"
+        message.type !== "DEFAULT"
     ) return;
 
     const gdb = await db.guild(message.guild.id);
     global.gdb = gdb;
     global.gldb = db.global;
+
+    if (!!gdb.get().mutes[message.author.id]) return deleteMessage(message);
 
     let { prefix } = gdb.get();
     if (!prefix.length) prefix = config.prefix;
