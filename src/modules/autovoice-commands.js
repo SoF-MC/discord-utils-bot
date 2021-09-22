@@ -18,7 +18,7 @@ module.exports = async (client = new Client) => {
 
         if (
             !memberChannelID ||
-            message.member.voice.channel.id !== memberChannelID ||
+            message.member.voice.channel !== memberChannel ||
             !validActions.includes(args[0])
         ) return deleteMessage(message);
 
@@ -35,11 +35,24 @@ module.exports = async (client = new Client) => {
                 }).then(async () => {
                     await message.channel.send(`${message.author.toString()}, ${toAdd.toString()} был добавлен в ваш канал.`).then(m => setTimeout(() => {
                         deleteMessage(m);
-                    }, 5000));
-                    deleteMessage(message);
+                        deleteMessage(message);
+                    }, 10000));
                 });
             case "remove":
-                break;
+                let toRemove = message.mentions.users.first() ? message.mentions.users.first().id : args[1];
+                if (!guild.members.cache.get(toRemove)) return deleteMessage(message);
+                else toRemove = guild.members.cache.get(toRemove);
+
+                return memberChannel.updateOverwrite(toRemove, {
+                    "CONNECT": false,
+                    "STREAM": false,
+                    "SPEAK": false
+                }).then(async () => {
+                    await message.channel.send(`${message.author.toString()}, доступ в Ваш канал для пользователя ${toAdd.toString()} был убран.`).then(m => setTimeout(() => {
+                        deleteMessage(m);
+                        deleteMessage(message);
+                    }, 10000));
+                });
             case "lock":
                 break;
             case "unlock":
