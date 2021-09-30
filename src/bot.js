@@ -68,6 +68,8 @@ client.on("message", async message => {
         message.type !== "DEFAULT"
     ) return;
 
+    if (message.channel.id == "893204926627463228") return message.crosspost();
+
     const gdb = await db.guild(message.guild.id);
     global.gdb = gdb;
     global.gldb = db.global;
