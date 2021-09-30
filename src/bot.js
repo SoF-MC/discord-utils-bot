@@ -62,13 +62,13 @@ client.once("shardReady", async (shardid, unavailable = new Set()) => {
 client.on("message", async message => {
     global.msg = message;
 
+    if (message.channel.id == "893204926627463228") return message.crosspost();
+
     if (
         !message.guild ||
         message.author.bot ||
         message.type !== "DEFAULT"
     ) return;
-
-    if (message.channel.id == "893204926627463228") return message.crosspost();
 
     const gdb = await db.guild(message.guild.id);
     global.gdb = gdb;
