@@ -5,7 +5,7 @@ module.exports = {
         "<ID>": "Айди пользователя."
     },
     examples: {},
-    aliases: [],
+    aliases: ["addvc"],
     permissionRequired: 1, // 0 All, 1 Admins, 2 Server Owner, 3 Bot Admin, 4 Bot Owner
     checkArgs: (args) => args.length == 2
 };
