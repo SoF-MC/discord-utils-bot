@@ -1,5 +1,5 @@
 module.exports = {
-    description: "привет :D",
+    description: "Добавить человека на проверку по воису",
     usage: {
         "<ник>": "Ник игрока.",
         "<ID>": "Айди пользователя."
@@ -40,7 +40,7 @@ module.exports.run = async (message, args) => {
                 },
                 description: [
                     "Теперь вам нужно подождать, пока вас пригласят в голосовой канал и проведут личную беседу. Время ожидания до 24-х часов."
-                ].join("\n"),
+                ]
             }
         }).then(() => message.channel.edit({ name: "build-" + message.channel.name.split("-")[1] }).catch()).catch();
         rcon.close();
