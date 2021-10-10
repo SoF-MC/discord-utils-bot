@@ -1,5 +1,5 @@
 module.exports = {
-    description: "привет :D",
+    description: "Добавить пользователя на проверку в голосовом канале.",
     usage: {
         "<ник>": "Ник игрока.",
         "<ID>": "Айди пользователя."
@@ -38,23 +38,9 @@ module.exports.run = async (message, args) => {
                     icon_url: message.author.avatarURL({ dynamic: true, format: "png" }),
                     text: "Принял: " + message.author.tag
                 },
-                description: [
-                    "Теперь зайдите на сервере по данным ниже, нажмите на табличку в центре (\"Билд\"), используйте команду `/p auto` и постарайтесь построить максимально красивую постройку.",
-                    "Территория должна быть оформлена и использована по максимуму.",
-                    "Если вы хотите пропустить этот этап, вы можете задонатить нам более 100 рублей. Реквизиты есть [здесь](https://wiki.soff.ml/1%29%20%D0%9E%D1%81%D0%BD%D0%BE%D0%B2%D0%BD%D0%BE%D0%B5/2/)"
-                ].join("\n"),
-                fields: [
-                    {
-                        name: "Айпи",
-                        value: "**`play.soff.ml`**",
-                        inline: true
-                    },
-                    {
-                        name: "Версия",
-                        value: "**`1.16.5`**",
-                        inline: true,
-                    }
-                ]
+                description:
+                    "Теперь Вам нужно подождать, пока Вас пригласят в голосовой канал и проведут личную беседу." +
+                    "Время ожидания до 24-х часов."
             }
         }).then(() => message.channel.edit({ name: "build-" + message.channel.name.split("-")[1] }).catch()).catch();
         rcon.close();
