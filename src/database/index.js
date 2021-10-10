@@ -1,7 +1,7 @@
 const config = require("../../config"), mongoose = require("mongoose");
 
-module.exports = () => {
-    mongoose.connect(config.database_uri, {
+module.exports = async () => {
+    await mongoose.connect(config.database_uri, {
         useNewUrlParser: true,
         useFindAndModify: false,
         useCreateIndex: true,
