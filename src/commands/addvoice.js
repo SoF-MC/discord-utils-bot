@@ -42,7 +42,7 @@ module.exports.run = async (message, args) => {
                     "Теперь вам нужно подождать, пока вас пригласят в голосовой канал и проведут личную беседу. Время ожидания до 24-х часов."
                 ]
             }
-        }).then(() => message.channel.edit({ name: "build-" + message.channel.name.split("-")[1] }).catch()).catch();
+        }).then(() => message.channel.edit({ name: "voice-" + message.channel.name.split("-")[1] }).catch()).catch();
         rcon.close();
     });
 
