@@ -99,6 +99,7 @@ client
     .on("shardReconnecting", () => log.log(`${shard} Reconnecting.`))
     .on("shardResume", (_, replayedEvents) => log.log(`${shard} Resumed. ${replayedEvents} replayed events.`))
     .on("warn", info => log.warn(`${shard} Warning. ${info}`))
-    .login(config.token);
+
+db.connection.then(() => client.login(config.token));
 
 process.on("unhandledRejection", rej => log.error(rej.stack));
