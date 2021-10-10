@@ -14,7 +14,7 @@ const client = new Discord.Client({
 });
 const log = require("./handlers/logger");
 const fs = require("fs");
-const db = require("./database/")();
+const db = require("./database/");
 const { deleteMessage } = require("./handlers/utils");
 
 global.sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
