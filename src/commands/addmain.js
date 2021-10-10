@@ -1,5 +1,5 @@
 module.exports = {
-    description: "привет :D",
+    description: "Добавить человека на сервер",
     usage: {
         "<ID>": "Айди пользователя."
     },
