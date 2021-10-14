@@ -98,7 +98,7 @@ client
     .on("shardError", err => log.error(`${shard} Error. ${err}`))
     .on("shardReconnecting", () => log.log(`${shard} Reconnecting.`))
     .on("shardResume", (_, replayedEvents) => log.log(`${shard} Resumed. ${replayedEvents} replayed events.`))
-    .on("warn", info => log.warn(`${shard} Warning. ${info}`))
+    .on("warn", info => log.warn(`${shard} Warning. ${info}`));
 
 db.connection.then(() => client.login(config.token));
 
