@@ -37,8 +37,6 @@ const save = async (changes) => {
     }).catch(console.log);
 };
 
-load();
-
 module.exports = {
     reload: () => load(),
     unload: () => dbCache.delete("global"),

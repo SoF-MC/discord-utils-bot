@@ -50,6 +50,7 @@ client.once("shardReady", async (shardid, unavailable = new Set()) => {
 
     disabledGuilds.size = 0;
     client.loading = false;
+    db.global.reload();
 
     await updatePresence();
     client.setInterval(updatePresence, 10000); // 10 seconds
