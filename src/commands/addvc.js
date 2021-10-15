@@ -32,4 +32,16 @@ module.exports.run = async (message, args) => {
 
     await gldb.setOnObject("nicknames", member.user.id, nickname);
     await m.edit(m.content + "\n✅ Ник пользователя успешно внесён в базу данных.").catch();
+    message.channel.send(member.user.toString(), {
+        embed: {
+            title: "Поздравляю! Вы прошли 1-й этап заявки.",
+            footer: {
+                icon_url: message.author.avatarURL({ dynamic: true, format: "png" }),
+                text: "Принял: " + message.author.tag
+            },
+            description:
+                "Теперь Вам нужно подождать, пока Вас пригласят в голосовой канал и проведут личную беседу." +
+                "Время ожидания до 24-х часов."
+        }
+    }).then(() => message.channel.edit({ name: "vc-" + message.channel.name.split("-")[1] }).catch()).catch();
 };
