@@ -14,8 +14,9 @@ const config = require("../../config");
 const mcUtil = require("minecraft-server-util");
 const rcon = new mcUtil.RCON("play.soff.ml", { port: 25598, password: config.passwords.rcon.build });
 const { deleteMessage } = require("../handlers/utils");
+const { Message } = require("discord.js");
 
-module.exports.run = async (message, args) => {
+module.exports.run = async (message = new Message, args) => {
     let nickname = args[0];
     let member = await message.guild.members.fetch(args[1]);
 
@@ -43,5 +44,11 @@ module.exports.run = async (message, args) => {
                 "Теперь Вам нужно подождать, пока Вас пригласят в голосовой канал и проведут личную беседу. " +
                 "Время ожидания до 24-х часов."
         }
-    }).then(() => message.channel.edit({ name: "vc-" + message.channel.name.split("-")[1] }).catch()).catch();
+    }).then(() => {
+        message.channel.edit({ name: "vc-" + message.channel.name.split("-")[1] });
+        message.client.channels.cache.get("896706646359830549").createOverwrite(args[1], {
+            VIEW_CHANNEL: true,
+            CONNECT: true
+        });
+    });
 };
