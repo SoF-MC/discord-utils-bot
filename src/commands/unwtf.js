@@ -43,5 +43,5 @@ module.exports.run = async (message, args) => {
         .replace(/\./g, "ю")
         .replace(/\//g, ".")
         .replace(/\`/g, "ё");
-    message.reply(unwtfd);
+    message.reply(unwtfd, { disableMentions: "all" });
 };
