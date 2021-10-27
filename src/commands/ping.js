@@ -8,25 +8,9 @@ module.exports = {
 };
 
 module.exports.run = async (message) => {
-    const m = await message.reply("〽️ Собираю информацию...");
+    const uptime = msToTime(client.uptime);
+    const api = Math.ceil(client.ws.ping);
+    const server = Date.now() - message.createdTimestamp;
 
-    return m.edit("", {
-        embed: {
-            title: "🏓 Понг!",
-            fields: [
-                {
-                    name: "Сервер",
-                    value: `\`${m.createdTimestamp - message.createdTimestamp}ms\``
-                },
-                {
-                    name: "API",
-                    value: `\`${Math.round(client.ws.ping)}ms\``
-                },
-                {
-                    name: "Аптайм",
-                    value: `\`${msToTime(client.uptime)}\``
-                }
-            ]
-        }
-    });
+    return await message.reply(`🏓 Пинг сервера \`${server}ms\`, пинг API \`${api}ms\`, аптайм бота \`${uptime}\`.`);
 };
