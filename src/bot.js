@@ -18,13 +18,8 @@ const db = require("./database/");
 const { deleteMessage } = require("./handlers/utils");
 
 global.sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
-global.getInvite = require("./constants/").getInvite;
 global.msToTime = require("./constants/").msToTime;
 global.plurify = require("./constants/").plurify;
-global.exec = require("child_process").exec;
-global.si = require("systeminformation");
-global.fetch = require("node-fetch");
-global.root = __dirname;
 global.client = client;
 global.log = log;
 global.db = db;
@@ -48,12 +43,12 @@ client.once("shardReady", async (shardid, unavailable = new Set()) => {
     await Promise.all(client.guilds.cache.map(guild => guild.members.fetch()));
     log.log(`${shard} All ${client.users.cache.size} users have been cached. [${Date.now() - userCachingStart}ms]`);
 
-    disabledGuilds.size = 0;
+    disabledGuilds = null;
     client.loading = false;
-    db.global.reload();
+    await db.global.reload();
 
     await updatePresence();
-    client.setInterval(updatePresence, 10000); // 10 seconds
+    client.setInterval(updatePresence, 60 * 1000); // 1 minute
 
     fs.readdir("./src/modules", (err, files) => {
         err ? log.error(err) : files.filter(file => file.endsWith(".js")).forEach(file => require(`./modules/${file}`)(client));
@@ -67,8 +62,7 @@ client.on("message", async message => {
 
     if (
         !message.guild ||
-        message.author.bot ||
-        message.type !== "DEFAULT"
+        message.author.bot
     ) return;
 
     const gdb = await db.guild(message.guild.id);
@@ -103,4 +97,4 @@ client
 
 db.connection.then(() => client.login(config.token));
 
-process.on("unhandledRejection", rej => log.error(rej.stack));
+process.on("unhandledRejection", rej => log.error(rej));
