@@ -10,23 +10,22 @@
     "type": "git",
     "url": "git+https://github.com/SoF-MC/discord-utils-bot.git"
   },
-  "author": "",
+  "author": "alex",
   "license": "GPL-3.0",
   "bugs": {
     "url": "https://github.com/SoF-MC/discord-utils-bot/issues"
   },
   "homepage": "https://github.com/SoF-MC/discord-utils-bot#readme",
   "dependencies": {
-    "axios": "^0.21.0",
-    "bufferutil": "^4.0.3",
-    "chalk": "^4.1.2",
-    "ssh2": "^1.4.0",
-    "discord.js": "^12.5.3",
-    "express": "^4.17.1",
-    "mongoose": "^5.13.3",
-    "systeminformation": "^5.8.6",
-    "utf-8-validate": "^5.0.5",
-    "minecraft-server-util": "^3.6.0",
-    "spam-detection": "1.0.3"
+    "@discordjs/builders": "^0.12.0",
+    "@discordjs/rest": "^0.3.0",
+    "bufferutil": "^4.0.6",
+    "discord-api-types": "^0.26.1",
+    "discord.js": "^13.6.0",
+    "minecraft-server-util": "^5.2.9",
+    "mongoose": "^6.1.10",
+    "nodejs-better-console": "^1.0.2",
+    "pretty-ms": "^7.0.1",
+    "utf-8-validate": "^5.0.8"
   }
 }
