@@ -11,7 +11,7 @@ module.exports = {
 
 const config = require("../../config");
 const mcUtil = require("minecraft-server-util");
-const rcon = new mcUtil.RCON("play.soff.ml", { port: 25690, password: config.passwords.rcon.main });
+//const rcon = new mcUtil.RCON("play.soff.ml", { port: 25690, password: config.passwords.rcon.main });
 const { deleteMessage } = require("../handlers/utils");
 
 module.exports.run = async (message, args) => {

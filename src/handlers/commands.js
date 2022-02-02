@@ -8,7 +8,7 @@ module.exports = async (interaction) => {
 
     const commandFile = require(`../commands/${commandName}.js`);
 
-    if (getPermissionLevel(interaction.member) < commandFile.permissionRequired) {
+    if (getPermissionLevel(interaction.member) < commandFile.permission) {
         return await interaction.reply({ content: "❌ Недостаточно прав.", ephemeral: true });
     };
 
@@ -26,16 +26,8 @@ module.exports.registerCommands = async (client) => {
 
     for (let filename of files) {
         let file = require(`../commands/${filename}`);
-        const name = file.name || "";
-
-        if (file.slash && name.length) {
-            commands.push({
-                name: name,
-                description: file.description || "none",
-                options: file.opts || null,
-            });
-        };
+        if (file.options) commands.push(file.options);
     };
 
-    return await rest.put(Routes.applicationGuildCommands(client.user.id, ""), { body: commands });
+    return await rest.put(Routes.applicationGuildCommands(client.user.id, "764178286233518100"), { body: commands });
 };

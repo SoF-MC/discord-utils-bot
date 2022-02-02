@@ -1,3 +1,4 @@
+require("nodejs-better-console").overrideConsole();
 const Discord = require("discord.js");
 const config = require("../config");
 

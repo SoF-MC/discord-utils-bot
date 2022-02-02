@@ -1,17 +1,23 @@
+const { SlashCommandBuilder } = require("@discordjs/builders");
+
 module.exports = {
-    description: "привет :D",
-    usage: {},
-    examples: {},
-    aliases: ["execute", "ex"],
-    permissionRequired: 4, // 0 All, 1 Admins, 2 Server Owner, 3 Bot Admin, 4 Bot Owner
-    checkArgs: (args) => !!args.length
+    options: new SlashCommandBuilder()
+        .setName("exec")
+        .setDescription("Execute bash script.")
+        .addStringOption((option) => option.setName("script").setDescription("Bash script that'd be ran.").setRequired(true))
+        .toJSON(),
+    permission: 4
 };
 
 const { exec } = require("child_process");
+const { CommandInteraction } = require("discord.js");
 
-module.exports.run = (message, args) => {
-    exec(args.join(" "), (error, stdout) => {
-        let res = (error || stdout);
-        message.channel.send(`\`\`\`${res}\`\`\``, { split: true });
+module.exports.run = async (interaction) => {
+    if (!(interaction instanceof CommandInteraction)) return;
+
+    await interaction.deferReply();
+
+    exec(interaction.options.getString("script"), async (error, stdout) => {
+        return await interaction.editReply(`\`\`\`${(error || stdout).slice(0, 1994)}\`\`\``);
     });
 };

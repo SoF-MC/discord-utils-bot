@@ -1,16 +1,37 @@
+const { SlashCommandBuilder } = require("@discordjs/builders");
+const { CommandInteraction } = require("discord.js");
+
 module.exports = {
-    description: "Get the latency of the bot.",
-    usage: {},
-    examples: {},
-    aliases: ["pong", "latency"],
-    permissionRequired: 0, // 0 All, 1 Admins, 2 Server Owner, 3 Bot Admin, 4 Bot Owner
-    checkArgs: (args) => !args.length
+    options: new SlashCommandBuilder()
+        .setName("ping")
+        .setDescription("Get latency of the bot.")
+        .toJSON(),
+    permission: 0
 };
 
-module.exports.run = async (message) => {
-    const uptime = msToTime(client.uptime);
-    const api = Math.ceil(client.ws.ping);
-    const server = Date.now() - message.createdTimestamp;
+const prettyms = require("pretty-ms");
 
-    return await message.reply(`🏓 Пинг сервера \`${server}ms\`, пинг API \`${api}ms\`, аптайм бота \`${uptime}\`.`);
+module.exports.run = async (interaction) => {
+    if (!(interaction instanceof CommandInteraction)) return;
+
+    await interaction.deferReply();
+
+    const uptime = prettyms(interaction.client.uptime);
+    const api = Math.ceil(interaction.guild.shard.ping);
+
+    return await interaction.editReply({
+        embeds: [{
+            title: "🏓 Понг!",
+            fields: [{
+                name: "Сервер",
+                value: `\`${Date.now() - interaction.createdTimestamp}ms\``
+            }, {
+                name: "API",
+                value: `\`${api}ms\``
+            }, {
+                name: "Аптайм",
+                value: `\`${uptime}\``
+            }]
+        }]
+    });
 };

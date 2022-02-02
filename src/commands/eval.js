@@ -1,26 +1,33 @@
+const { SlashCommandBuilder } = require("@discordjs/builders");
+const { CommandInteraction } = require("discord.js");
+const { errorMonitor } = require("events");
+
 module.exports = {
-	description: "привет :D",
-	usage: {},
-	examples: {},
-	aliases: ["evaluate", "ev"],
-	permissionRequired: 4, // 0 All, 1 Admins, 2 Server Owner, 3 Bot Admin, 4 Bot Owner
-	checkArgs: (args) => !!args.length
+	options: new SlashCommandBuilder()
+		.setName("eval")
+		.setDescription("Evaluate JavaScript.")
+		.addStringOption((option) => option.setName("script").setDescription("Script that'd be ran.").setRequired(true))
+		.toJSON(),
+	permission: 4
 };
 
-module.exports.run = async (message, args) => {
-	let content = args.join(" ");
+module.exports.run = async (interaction) => {
+	if (!(interaction instanceof CommandInteraction)) return;
+
+	await interaction.deferReply();
+
 	try {
-		let evaled = await eval(content);
-		if (typeof evaled !== "string") evaled = require("util").inspect(evaled);
+		let evaled = await eval(interaction.options.getString("script"));
+		if (typeof evaled != "string") evaled = require("util").inspect(evaled);
 
-		if (String(evaled).length >= 4000) return message.react("✅");
+		if (evaled.length >= 2000) return await interaction.editReply("✅");
 
-		message.channel.send(evaled, { code: "js", split: true }).catch();
+		return await interaction.editReply(`\`\`\`js\n${evaled}\n\`\`\``);
 	} catch (e) {
 		let err;
-		if (typeof e == "string") err = e.replace(/`/g, "`" + String.fromCharCode(8203)).replace(/@/g, "@" + String.fromCharCode(8203));
+		if (typeof e == "string") err = e.replace(/`/g, "`" + String.fromCharCode(8203));
 		else err = e;
 
-		message.channel.send(err, { code: "fix", split: true }).catch();
+		return await interaction.editReply(`\`\`\`fix\n${err}\n\`\`\``);
 	};
 };
