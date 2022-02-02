@@ -17,7 +17,7 @@
   },
   "homepage": "https://github.com/SoF-MC/discord-utils-bot#readme",
   "dependencies": {
-    "axios": "^0.21.0",
+    "axios": "^0.25.0",
     "bufferutil": "^4.0.3",
     "chalk": "^4.1.2",
     "ssh2": "^1.4.0",
