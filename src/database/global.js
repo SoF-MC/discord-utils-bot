@@ -1,33 +1,37 @@
 const mongoose = require("mongoose");
 
-const dbCache = new Map(), dbSaveQueue = new Map();
+const dbCache = new Map();
+const dbSaveQueue = new Map();
 
 const globalObject = {
-    nicknames: {},
-    domains: []
+    nicknames: {}
 };
 
-const globalSchema = mongoose.Schema(JSON.parse(JSON.stringify(globalObject)), { minimize: true });
+const globalSchema = mongoose.Schema(globalObject, { minimize: true });
 const Global = mongoose.model("Global", globalSchema);
 
 const get = () => new Promise((resolve, reject) => Global.findOne({}, (err, global) => {
     if (err) return reject(err);
     if (!global) {
-        global = new Global(JSON.parse(JSON.stringify(globalObject)));
+        global = new Global(globalObject);
     };
     return resolve(global);
 }));
 
 const load = async () => {
-    let global = await get(), globalCache = {}, freshGuildObject = JSON.parse(JSON.stringify(globalObject));
+    let global = await get(), globalCache = {}, freshGuildObject = globalObject;
     for (const key in freshGuildObject) globalCache[key] = global[key] || freshGuildObject[key];
     return dbCache.set("global", globalCache);
 };
 
 const save = async (changes) => {
     dbSaveQueue.set("global", changes);
-    let global = await get(), globalCache = dbCache.get("global"), globalSaveQueue = JSON.parse(JSON.stringify(dbSaveQueue.get("global")));
+    let global = await get();
+    const globalCache = dbCache.get("global");
+    const globalSaveQueue = dbSaveQueue.get("global");
+
     for (const key of globalSaveQueue) global[key] = globalCache[key];
+
     return global.save().then(() => {
         let newSaveQueue = dbSaveQueue.get("global");
         if (newSaveQueue.length > globalSaveQueue.length) {

@@ -3,96 +3,95 @@ const mongoose = require("mongoose");
 const dbCache = new Map(), dbSaveQueue = new Map();
 
 const guildObject = {
-    guildid: "",
-    prefix: "",
-    privateVoices: {},
-    mutes: {}
+    guildId: ""
 };
 
-const guildSchema = mongoose.Schema(JSON.parse(JSON.stringify(guildObject)), { minimize: true }); // make a copy of guildObject
+const guildSchema = mongoose.Schema(guildObject, { minimize: true }); // make a copy of guildObject
 const Guild = mongoose.model("Guild", guildSchema);
 
-const get = (guildid) => new Promise((resolve, reject) => Guild.findOne({ guildid }, (err, guild) => {
+const get = (guildId) => new Promise((resolve, reject) => Guild.findOne({ guildId }, (err, guild) => {
     if (err) return reject(err);
     if (!guild) {
-        guild = new Guild(JSON.parse(JSON.stringify(guildObject)));
-        guild.guildid = guildid;
+        guild = new Guild(guildObject);
+        guild.guildId = guildId;
     };
     return resolve(guild);
 }));
 
-const load = async (guildid) => {
-    let guild = await get(guildid), guildCache = {}, freshGuildObject = JSON.parse(JSON.stringify(guildObject)); // make a fresh one, to not make duplicates across guilds (for example on arrays and objects)
-    for (const key in freshGuildObject) guildCache[key] = guild[key] || freshGuildObject[key]; // if there's no value stored in the guild database then we use the default value
-    return dbCache.set(guildid, guildCache);
+const load = async (guildId) => {
+    let guild = await get(guildId), guildCache = {}, freshGuildObject = guildObject;
+    for (const key in freshGuildObject) guildCache[key] = guild[key] || freshGuildObject[key];
+    return dbCache.set(guildId, guildCache);
 };
 
-const save = async (guildid, changes) => {
-    if (!dbSaveQueue.has(guildid)) {
-        dbSaveQueue.set(guildid, changes);
-        let guild = await get(guildid), guildCache = dbCache.get(guildid), guildSaveQueue = JSON.parse(JSON.stringify(dbSaveQueue.get(guildid)));
+const save = async (guildId, changes) => {
+    if (!dbSaveQueue.has(guildId)) {
+        dbSaveQueue.set(guildId, changes);
+        let guild = await get(guildId);
+        let guildCache = dbCache.get(guildId);
+        let guildSaveQueue = dbSaveQueue.get(guildId);
+
         for (const key of guildSaveQueue) guild[key] = guildCache[key];
         return guild.save().then(() => {
-            let newSaveQueue = dbSaveQueue.get(guildid);
+            let newSaveQueue = dbSaveQueue.get(guildId);
             if (newSaveQueue.length > guildSaveQueue.length) {
-                dbSaveQueue.delete(guildid);
-                save(guildid, newSaveQueue.filter(key => !guildSaveQueue.includes(key)));
-            } else dbSaveQueue.delete(guildid);
+                dbSaveQueue.delete(guildId);
+                save(guildId, newSaveQueue.filter(key => !guildSaveQueue.includes(key)));
+            } else dbSaveQueue.delete(guildId);
         }).catch(console.log);
-    } else dbSaveQueue.get(guildid).push(...changes);
+    } else dbSaveQueue.get(guildId).push(...changes);
 };
 
-module.exports = () => (async guildid => {
-    if (!dbCache.has(guildid)) await load(guildid);
+module.exports = () => (async guildId => {
+    if (!dbCache.has(guildId)) await load(guildId);
     return {
-        reload: () => load(guildid),
-        unload: () => dbCache.delete(guildid),
+        reload: () => load(guildId),
+        unload: () => dbCache.delete(guildId),
 
-        get: () => Object.assign({}, dbCache.get(guildid)),
+        get: () => Object.assign({}, dbCache.get(guildId)),
         set: (key, value) => {
-            dbCache.get(guildid)[key] = value;
-            save(guildid, [key]);
+            dbCache.get(guildId)[key] = value;
+            save(guildId, [key]);
         },
         setMultiple: (changes) => {
-            let guildCache = dbCache.get(guildid);
+            let guildCache = dbCache.get(guildId);
             Object.assign(guildCache, changes);
 
-            save(guildid, Object.keys(changes));
+            save(guildId, Object.keys(changes));
         },
         addToArray: (array, value) => {
-            dbCache.get(guildid)[array].push(value);
-            save(guildid, [array]);
+            dbCache.get(guildId)[array].push(value);
+            save(guildId, [array]);
         },
         removeFromArray: (array, value) => {
-            dbCache.get(guildid)[array] = dbCache.get(guildid)[array].filter(aValue => aValue !== value);
-            save(guildid, [array]);
+            dbCache.get(guildId)[array] = dbCache.get(guildId)[array].filter(aValue => aValue !== value);
+            save(guildId, [array]);
         },
         setOnObject: (object, key, value) => {
-            dbCache.get(guildid)[object][key] = value;
-            save(guildid, [object]);
+            dbCache.get(guildId)[object][key] = value;
+            save(guildId, [object]);
         },
         removeFromObject: (object, key) => {
-            delete dbCache.get(guildid)[object][key];
-            save(guildid, [object]);
+            delete dbCache.get(guildId)[object][key];
+            save(guildId, [object]);
         },
         reset: () => {
-            let guildCache = dbCache.get(guildid);
+            let guildCache = dbCache.get(guildId);
             Object.assign(guildCache, guildObject);
-            guildCache.guildid = guildid;
+            guildCache.guildId = guildId;
 
-            save(guildid, Object.keys(guildObject));
+            save(guildId, Object.keys(guildObject));
         }
     };
 });
 
 module.exports.cacheAll = async (guilds = new Set()) => {
-    let gdbs = await Guild.find({ $or: [...guilds].map(guildid => ({ guildid })) });
-    return await Promise.all([...guilds].map(async guildid => {
-        let
-            guild = gdbs.find(db => db.guildid == guildid) || { guildid },
-            guildCache = {},
-            freshGuildObject = JSON.parse(JSON.stringify(guildObject));
+    let gdbs = await Guild.find({ $or: [...guilds].map(guildId => ({ guildId })) });
+    return await Promise.all([...guilds].map(async guildId => {
+        let guild = gdbs.find(db => db.guildId == guildId) || { guildId };
+        let guildCache = {};
+        let freshGuildObject = guildObject;
         for (const key in freshGuildObject) guildCache[key] = guild[key] || freshGuildObject[key];
-        return dbCache.set(guildid, guildCache);
+        return dbCache.set(guildId, guildCache);
     }));
 };

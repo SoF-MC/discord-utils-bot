@@ -1,64 +1,41 @@
-const fs = require("fs");
-const { getPermissionLevel } = require("../constants/"), { loadCommandDescriptions } = require("../commands/help");
-const { Message } = require("discord.js");
+const { CommandInteraction } = require("discord.js");
+const { getPermissionLevel } = require("../constants/");
 
-module.exports = async (message = new Message, prefix = String, gdb, db) => {
-    let content;
-    if (message.content.match(`^<@!?${client.user.id}> `)) content = message.content.split(" ").slice(1);
-    else content = message.content.slice(prefix.length).split(" ");
-    const commandOrAlias = content.shift().toLowerCase(), commandName = aliases.get(commandOrAlias) || commandOrAlias;
-    content = content.join(" ");
+module.exports = async (interaction) => {
+    if (!(interaction instanceof CommandInteraction)) return;
 
-    const static = statics.find(s => s.triggers.includes(commandName));
-    if (!static && !commands.has(commandName)) return;
+    const commandName = interaction.commandName;
 
-    const processCommand = async () => {
-        log.log(`**${message.author.tag.replace("*", "\*")}** used the \`${commandName}\` command (\`${message.guild.name}\` - \`${message.channel.name}\`)`);
+    const commandFile = require(`../commands/${commandName}.js`);
 
-        if (static) return message.channel.send(static.message.replace(/{{INVITE}}/g, await client.generateInvite({ permissions: 19529 })));
-
-        const commandFile = commands.get(commandName);
-
-        const permissionLevel = getPermissionLevel(message.member);
-        if (permissionLevel < commandFile.permissionRequired) return message.channel.send("❌ Недостаточно прав.");
-
-        const args = (content.match(/"[^"]+"|[^ ]+/g) || []).map(arg => arg);
-        if (!commandFile.checkArgs(args)) return message.channel.send(`❌ Неверные аргументы. Для помощи, напишите \`${prefix}help ${commandName}\`.`);
-
-        return commandFile.run(message, args, gdb, { prefix, permissionLevel, db })
-            .catch(async (e) => {
-                log.error(`An error occured while executing ${commandName}: ${e.stack}`);
-                message.react("❌").then(message.reply(`${commandName} ::\n${e.stack}`));
-            });
+    if (getPermissionLevel(interaction.member) < commandFile.permissionRequired) {
+        return await interaction.reply({ content: "❌ Недостаточно прав.", ephemeral: true });
     };
-    await processCommand();
+
+    return await commandFile.run(interaction);
 };
 
-// loading commands
-const commands = new Map(), aliases = new Map(), statics = require("../commands/_static.json");
+const { REST } = require("@discordjs/rest");
+const { Routes } = require("discord-api-types/v9");
+const fs = require("fs");
+const commands = [];
+const rest = new REST({ version: "9" }).setToken(require("../../config").token);
 
-fs.readdir("./src/commands/", (err, files) => {
-    if (err) return log.error(err);
-    for (const file of files) if (file.endsWith(".js")) loadCommand(file.replace(".js", ""));
-});
+module.exports.registerCommands = async (client) => {
+    const files = fs.readdirSync(__dirname + "/../commands/");
 
-const loadCommand = fileName => {
-    const commandFile = require(`../commands/${fileName}.js`);
+    for (let filename of files) {
+        let file = require(`../commands/${filename}`);
+        const name = file.name || "";
 
-    commands.set(fileName, commandFile);
-    if (commandFile.aliases) for (const alias of commandFile.aliases) aliases.set(alias, fileName);
-};
+        if (file.slash && name.length) {
+            commands.push({
+                name: name,
+                description: file.description || "none",
+                options: file.opts || null,
+            });
+        };
+    };
 
-module.exports.reloadCommand = command => {
-    delete require.cache[require.resolve(`../commands/${command}.js`)];
-    loadCommand(command);
-    loadCommandDescriptions();
-};
-
-module.exports.reloadStaticCommands = () => {
-    delete require.cache[require.resolve("../commands/_static.json")];
-    const newStatics = require("../commands/_static.json");
-    statics.length = 0; // remove everything from the variable
-    statics.push(...newStatics); // add new data to same variable
-    loadCommandDescriptions();
+    return await rest.put(Routes.applicationGuildCommands(client.user.id, ""), { body: commands });
 };

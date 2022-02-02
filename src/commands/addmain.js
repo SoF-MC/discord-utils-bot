@@ -70,6 +70,6 @@ module.exports.run = async (message, args) => {
         m.edit(m.content + "\n✅ Запрос на добавление в вайтлист был отправлен.").catch();
         rcon.run("addwl " + nick);
     }).catch(err => {
-        log.error(err);
+        console.error(err);
     });
 };

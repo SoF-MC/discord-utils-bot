@@ -10,13 +10,9 @@ module.exports = {
     checkArgs: (args) => args.length == 2
 };
 
-const config = require("../../config");
-const mcUtil = require("minecraft-server-util");
-const rcon = new mcUtil.RCON("play.soff.ml", { port: 25598, password: config.passwords.rcon.build });
 const { deleteMessage } = require("../handlers/utils");
-const { Message } = require("discord.js");
 
-module.exports.run = async (message = new Message, args) => {
+module.exports.run = async (message, args) => {
     let nickname = args[0];
     let member = await message.guild.members.fetch(args[1]);
 

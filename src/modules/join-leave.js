@@ -10,7 +10,7 @@ module.exports = (client = new Client) => {
             "790925095593443338",       // spacer
             "764180408056414289"        // guest
         ], "Join autorole.").then(() => {
-            guild.channels.cache.get("764179432147124304").send(`<@${member.user.id}>, сервер закрыт. Переходите сюда: discord.gg/C9RHqjA6ZS`);
+            guild.channels.cache.get("764179432147124304").send(`${member}, сервер пока что ещё не открыт, но находится в стадии активной разработки. следите за новостями`);
         });
     });
 };
