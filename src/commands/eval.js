@@ -8,7 +8,7 @@ module.exports = {
 		.setDescription("Evaluate JavaScript.")
 		.addStringOption((option) => option.setName("script").setDescription("Script that'd be ran.").setRequired(true))
 		.toJSON(),
-	permission: 4
+	permission: 3
 };
 
 module.exports.run = async (interaction) => {
