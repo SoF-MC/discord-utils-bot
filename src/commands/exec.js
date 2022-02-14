@@ -18,6 +18,6 @@ module.exports.run = async (interaction) => {
     await interaction.deferReply();
 
     exec(interaction.options.getString("script"), async (error, stdout) => {
-        return await interaction.editReply(`\`\`\`${(error || stdout).slice(0, 1994)}\`\`\``);
+        return await interaction.editReply(`\`\`\`${(error || stdout).toString().slice(0, 1994)}\`\`\``);
     });
 };
