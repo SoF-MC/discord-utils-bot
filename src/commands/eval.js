@@ -1,6 +1,5 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
 const { CommandInteraction } = require("discord.js");
-const { errorMonitor } = require("events");
 
 module.exports = {
 	options: new SlashCommandBuilder()
