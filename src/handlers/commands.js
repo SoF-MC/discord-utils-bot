@@ -5,7 +5,6 @@ module.exports = async (interaction) => {
     if (!(interaction instanceof CommandInteraction)) return;
 
     const commandName = interaction.commandName;
-
     const commandFile = require(`../commands/${commandName}.js`);
 
     if (getPermissionLevel(interaction.member) < commandFile.permission) {
