@@ -28,8 +28,6 @@ client.once("shardReady", async (shardId, unavailable = new Set()) => {
     shard = `[Shard ${shardId}]`;
     console.log(`${shard} Ready as ${client.user.tag}! Caching guilds.`);
 
-    client.loading = true;
-
     await commandHandler.registerCommands(client);
 
     let disabledGuilds = new Set([...Array.from(unavailable), ...client.guilds.cache.map(guild => guild.id)]);
@@ -39,7 +37,6 @@ client.once("shardReady", async (shardId, unavailable = new Set()) => {
     console.log(`${shard} All ${disabledGuilds.size} guilds have been cached. [${Date.now() - guildCachingStart}ms]`);
 
     disabledGuilds = null;
-    client.loading = false;
     await db.global.reload();
 
     updatePresence();
