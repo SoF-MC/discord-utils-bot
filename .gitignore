@@ -222,6 +222,6 @@ $RECYCLE.BIN/
 
 # custom
 
-config.js
+**/config*
 .idea
 target/

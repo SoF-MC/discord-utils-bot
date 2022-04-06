@@ -1,0 +1,24 @@
+{
+    "compilerOptions": {
+        "allowJs": false,
+        "esModuleInterop": true,
+        "experimentalDecorators": true,
+        "incremental": true,
+        "forceConsistentCasingInFileNames": true,
+        "lib": [
+            "ES2020",
+            "ES2021",
+            "ESNext"
+        ],
+        "module": "commonjs",
+        "outDir": "./build",
+        "strict": false,
+        "strictPropertyInitialization": false,
+        "skipLibCheck": true,
+        "target": "ES2020",
+        "removeComments": true,
+    },
+    "include": [
+        "./src"
+    ]
+}
