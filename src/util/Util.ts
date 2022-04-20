@@ -12,7 +12,7 @@ class Util {
     private _client: Client;
     private _mongoose: typeof import("mongoose");
     private _database: typeof import("../database/");
-    public static inspect = inspect;
+    public inspect = inspect;
 
     public setClient(client: Client): Util {
         this._client = client;

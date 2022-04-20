@@ -4,8 +4,7 @@ import { GlobalObject } from "../../types";
 const dbCache = new Map<string, GlobalObject>(), dbSaveQueue = new Map<string, string[]>();
 
 const globalObject = {
-    permissions: {},
-    userdata: []
+    ticketMessage: ""
 } as GlobalObject;
 
 const globalSchema = new Schema(globalObject as any, { minimize: true });

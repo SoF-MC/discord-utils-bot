@@ -4,8 +4,8 @@
   "description": "",
   "main": "build/src/bot.js",
   "scripts": {
-    "start": "node .",
-    "build": "npx tsc && node .",
+    "launch": "npx tsc && node .",
+    "build": "npx tsc",
     "watch": "npx tsc -w"
   },
   "repository": {
@@ -19,7 +19,8 @@
     "@discordjs/rest": "^0.3.0",
     "bufferutil": "^4.0.6",
     "discord-api-types": "^0.31.0",
-    "discord.js": "^14.0.0-dev.1649160496-402514f",
+    "discord-html-transcripts": "^2.3.2",
+    "discord.js": "^13.6.0",
     "minecraft-server-util": "^5.2.9",
     "mongoose": "^6.2.10",
     "nodejs-better-console": "^1.0.2",

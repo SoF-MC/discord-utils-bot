@@ -3,6 +3,7 @@ const util_1 = require("util");
 let util = null;
 class Util {
     constructor() {
+        this.inspect = util_1.inspect;
         if (util)
             return util;
         util = this;
@@ -36,6 +37,5 @@ class Util {
     }
     ;
 }
-Util.inspect = util_1.inspect;
 ;
 module.exports = new Util;

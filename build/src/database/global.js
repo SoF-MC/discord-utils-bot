@@ -2,8 +2,7 @@
 const mongoose_1 = require("mongoose");
 const dbCache = new Map(), dbSaveQueue = new Map();
 const globalObject = {
-    permissions: {},
-    userdata: []
+    ticketMessage: ""
 };
 const globalSchema = new mongoose_1.Schema(globalObject, { minimize: true });
 const Global = (0, mongoose_1.model)("Global", globalSchema);
