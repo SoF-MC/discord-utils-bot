@@ -22,7 +22,7 @@ module.exports = {
         const file = await (0, discord_html_transcripts_1.createTranscript)(channel, {
             limit: -1,
             returnBuffer: false,
-            fileName: `${channel.name.match(/а-яa-z/i)?.[0]}-${Date.now()}.html`
+            fileName: `${channel.name}-${Date.now()}.html`
         });
         await interaction.editReply({
             content: `Exported \`${file.name}\` in ${(0, pretty_ms_1.default)(Date.now() - start)}.`,

@@ -24,7 +24,7 @@ export = {
         const file = await createTranscript(channel, {
             limit: -1,
             returnBuffer: false,
-            fileName: `${channel.name.match(/а-яa-z/i)?.[0]}-${Date.now()}.html`
+            fileName: `${channel.name}-${Date.now()}.html`
         }) as MessageAttachment;
 
         await interaction.editReply({
