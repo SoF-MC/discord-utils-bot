@@ -26,7 +26,7 @@ export = {
             fileName: `${channel.name.match(/а-яa-z/i)?.[0]}-${Date.now()}.html`
         }) as MessageAttachment;
 
-        await interaction.reply({
+        await interaction.editReply({
             content: `Exported \`${file.name}\` in ${prettyms(Date.now() - start)}.`,
             files: [file]
         })

@@ -23,7 +23,7 @@ module.exports = {
             limit: -1,
             fileName: `${channel.name.match(/а-яa-z/i)?.[0]}-${Date.now()}.html`
         });
-        await interaction.reply({
+        await interaction.editReply({
             content: `Exported \`${file.name}\` in ${(0, pretty_ms_1.default)(Date.now() - start)}.`,
             files: [file]
         });
