@@ -18,7 +18,7 @@
     "@discordjs/builders": "^0.12.0",
     "@discordjs/rest": "^0.3.0",
     "bufferutil": "^4.0.6",
-    "discord-api-types": "^0.31.0",
+    "discord-api-types": "^0.33.1",
     "discord-html-transcripts": "^2.3.2",
     "discord.js": "^13.6.0",
     "minecraft-server-util": "^5.2.9",
