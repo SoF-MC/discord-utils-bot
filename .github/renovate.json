@@ -1,0 +1,17 @@
+{
+  "extends": [
+    "config:base"
+  ],
+  "labels": [
+    "dependencies"
+  ],
+  "additionalReviewers": [
+    "itzJOHv"
+  ],
+  "timezone": "Europe/Kiev",
+  "schedule": "before 6am every day",
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": "before 6am every day"
+  }
+}
