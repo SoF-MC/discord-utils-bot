@@ -7,6 +7,7 @@ export interface Config {
     admins: string[],
     rcon: {
         host: string,
+        port: number,
         password: string
     }
 }
@@ -14,7 +15,7 @@ export interface Config {
 export interface UserData {
     user: string,
     nickname?: string,
-    permissions?: 0 | 1 | 2 | 3 | 4 | 5,
+    permissions: 0 | 1 | 2 | 3 | 4 | 5,
     ticketData?: {
         nickname?: string,
         age?: number,

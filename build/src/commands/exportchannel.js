@@ -12,7 +12,7 @@ module.exports = {
         .addChannelOption(o => o
         .setName("channel")
         .setDescription("Channel to export.")
-        .addChannelTypes([0, 5]))
+        .addChannelTypes(0, 5))
         .toJSON(),
     permission: 5,
     run: async (interaction) => {

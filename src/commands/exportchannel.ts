@@ -2,7 +2,6 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { createTranscript } from "discord-html-transcripts";
 import { CommandInteraction, GuildTextBasedChannel, MessageAttachment } from "discord.js";
 import prettyms from "pretty-ms";
-import Util from "../util/Util";
 
 export = {
     options: new SlashCommandBuilder()
@@ -12,7 +11,7 @@ export = {
             o
                 .setName("channel")
                 .setDescription("Channel to export.")
-                .addChannelTypes([0, 5])
+                .addChannelTypes(0, 5)
         )
         .toJSON(),
     permission: 5,

@@ -60,7 +60,7 @@ export const processButton = async (interaction: ButtonInteraction) => {
         });
     } else if (buttonId === "tickets:reopen") {
         const ticket = (await ticketsModel.findOne({ channel: interaction.channel.id })).toJSON() as any as TicketObject;
-        await (interaction.message as Message).delete();
+        await (interaction.message as Message).delete().catch(() => null);
         await interaction.channel.permissionOverwrites.create(ticket.user, { VIEW_CHANNEL: true });
         await ticketsModel.findOneAndUpdate({ channel: interaction.channel.id }, { $set: { closed: false } });
     } else if (buttonId === "tickets:close") {
@@ -77,14 +77,23 @@ export const processButton = async (interaction: ButtonInteraction) => {
             ])]
         });
         await ticketsModel.findOneAndUpdate({ channel: interaction.channel.id }, { $set: { closed: true } });
+    } else if (buttonId === "tickets:accept") {
+        const ticket = (await ticketsModel.findOne({ channel: interaction.channel.id })).toJSON() as any as TicketObject;
+        if (ticket.state === 0) {
+            await interaction.editReply("WIP");
+            return;
+        } else if (ticket.state === 1) {
+            await interaction.editReply("WIP");
+            return;
+        };
     } else if (buttonId === "tickets:delete") {
         await ticketsModel.findOneAndDelete({ channel: interaction.channel.id });
         await interaction.channel.delete();
     } else if (buttonId === "tickets:setnick") {
         await interaction.reply("У вас есть **30 секунд**, чтобы написать свой никнейм в этом канале.");
         let timeout = setTimeout(async () =>
-            await interaction.editReply("Время вышло.").then(async () => setTimeout(async () => await interaction.deleteReply(), 5_000)),
-            32_000
+            await interaction.editReply("Время вышло.").then(async () => setTimeout(async () => await interaction.deleteReply().catch(() => null), 5_000)),
+            30_000
         );
         const message = (await interaction.channel.awaitMessages({ filter: (m) => m.author.id === interaction.user.id, max: 1, time: 30_000 })).first();
         if (!message) return;
@@ -95,22 +104,22 @@ export const processButton = async (interaction: ButtonInteraction) => {
             nick.length !== message.content.length
         ) return await interaction.editReply("Никнейм должен состоять из латинских букв и цифр, не менее 2 и не более 16 символов.")
             .then(() => setTimeout(async () => {
-                await interaction.deleteReply();
-                await message.delete();
-            }, 6_000));
-        await message.delete();
+                await interaction.deleteReply().catch(() => null);
+                await message.delete().catch(() => null);
+            }, 5_000));
+        await message.delete().catch(() => null);
         await interaction.editReply("Никнейм принят, обновляю в БД...");
-        let { data } = ((await ticketsModel.findOneAndUpdate({ channel: interaction.channel.id })).toJSON() as any as TicketObject);
+        let { data } = ((await ticketsModel.findOne({ channel: interaction.channel.id })).toJSON() as any as TicketObject);
         if (!data) data = {};
         data.nickname = nick;
         await ticketsModel.findOneAndUpdate({ channel: interaction.channel.id }, { $set: { data } });
         await updateMessage(interaction.message as Message);
         await interaction.editReply("Готово.");
-        setTimeout(async () => await interaction.deleteReply(), 4_000);
+        setTimeout(async () => await interaction.deleteReply().catch(() => null), 4_000);
     } else if (buttonId === "tickets:setage") {
         await interaction.reply("У вас есть **10 секунд**, чтобы написать свой возраст в этом канале.");
         let timeout = setTimeout(async () =>
-            await interaction.editReply("Время вышло.").then(async () => setTimeout(async () => await interaction.deleteReply(), 5_000)),
+            await interaction.editReply("Время вышло.").then(async () => setTimeout(async () => await interaction.deleteReply().catch(() => null), 5_000)),
             12_000
         );
         const message = (await interaction.channel.awaitMessages({ filter: (m) => m.author.id === interaction.user.id, max: 1, time: 10_000 })).first();
@@ -122,22 +131,22 @@ export const processButton = async (interaction: ButtonInteraction) => {
             age.length !== message.content.length
         ) return await interaction.editReply("Возраст должен состоять из цифр, не менее и не более 2 символов.")
             .then(() => setTimeout(async () => {
-                await interaction.deleteReply();
-                await message.delete();
+                await interaction.deleteReply().catch(() => null);
+                await message.delete().catch(() => null);
             }, 6_000));
-        await message.delete();
+        await message.delete().catch(() => null);
         await interaction.editReply("Возраст принят, обновляю в БД...");
-        let { data } = ((await ticketsModel.findOneAndUpdate({ channel: interaction.channel.id })).toJSON() as any as TicketObject);
+        let { data } = ((await ticketsModel.findOne({ channel: interaction.channel.id })).toJSON() as any as TicketObject);
         if (!data) data = {};
         data.age = parseInt(age);
         await ticketsModel.findOneAndUpdate({ channel: interaction.channel.id }, { $set: { data } });
         await updateMessage(interaction.message as Message);
         await interaction.editReply("Готово.");
-        setTimeout(async () => await interaction.deleteReply(), 4_000);
+        setTimeout(async () => await interaction.deleteReply().catch(() => null), 4_000);
     } else if (buttonId === "tickets:setshort") {
         await interaction.reply("У вас есть **2 минуты**, чтобы написать сколько планируете уделять времени серверу.");
         let timeout = setTimeout(async () =>
-            await interaction.editReply("Время вышло.").then(async () => setTimeout(async () => await interaction.deleteReply(), 5_000)),
+            await interaction.editReply("Время вышло.").then(async () => setTimeout(async () => await interaction.deleteReply().catch(() => null), 5_000)),
             122_000
         );
         const message = (await interaction.channel.awaitMessages({ filter: (m) => m.author.id === interaction.user.id, max: 1, time: 120_000 })).first();
@@ -149,22 +158,22 @@ export const processButton = async (interaction: ButtonInteraction) => {
             (short.length > 512 && short.length < 16)
         ) return await interaction.editReply("Длина ответа должна составлять от 16 до 512 символов.")
             .then(() => setTimeout(async () => {
-                await interaction.deleteReply();
-                await message.delete();
+                await interaction.deleteReply().catch(() => null);
+                await message.delete().catch(() => null);
             }, 6_000));
-        await message.delete();
+        await message.delete().catch(() => null);
         await interaction.editReply("Принято, обновляю в БД...");
-        let { data } = ((await ticketsModel.findOneAndUpdate({ channel: interaction.channel.id })).toJSON() as any as TicketObject);
+        let { data } = ((await ticketsModel.findOne({ channel: interaction.channel.id })).toJSON() as any as TicketObject);
         if (!data) data = {};
         data.short = short;
         await ticketsModel.findOneAndUpdate({ channel: interaction.channel.id }, { $set: { data } });
         await updateMessage(interaction.message as Message);
         await interaction.editReply("Готово.");
-        setTimeout(async () => await interaction.deleteReply(), 4_000);
+        setTimeout(async () => await interaction.deleteReply().catch(() => null), 4_000);
     } else if (buttonId === "tickets:setlong") {
         await interaction.reply("У вас есть **2 минуты**, чтобы написать сколько планируете уделять времени серверу.");
         let timeout = setTimeout(async () =>
-            await interaction.editReply("Время вышло.").then(async () => setTimeout(async () => await interaction.deleteReply(), 5_000)),
+            await interaction.editReply("Время вышло.").then(async () => setTimeout(async () => await interaction.deleteReply().catch(() => null), 5_000)),
             122_000
         );
         const message = (await interaction.channel.awaitMessages({ filter: (m) => m.author.id === interaction.user.id, max: 1, time: 120_000 })).first();
@@ -176,19 +185,19 @@ export const processButton = async (interaction: ButtonInteraction) => {
             (long.length > 512 && long.length < 16)
         ) return await interaction.editReply("Длина ответа должна составлять от 16 до 512 символов.")
             .then(() => setTimeout(async () => {
-                await interaction.deleteReply();
-                await message.delete();
+                await interaction.deleteReply().catch(() => null);
+                await message.delete().catch(() => null);
             }, 6_000));
         await interaction.editReply("Принято, обновляю в БД...");
-        let { data } = ((await ticketsModel.findOneAndUpdate({ channel: interaction.channel.id })).toJSON() as any as TicketObject);
+        let { data } = ((await ticketsModel.findOne({ channel: interaction.channel.id })).toJSON() as any as TicketObject);
         if (!data) data = {};
         data.long = long;
         await ticketsModel.findOneAndUpdate({ channel: interaction.channel.id }, { $set: { data } });
         await updateMessage(interaction.message as Message);
         await interaction.editReply("Готово. (У вас есть 20 секунд, чтобы скопировать сообщение, в случае если хотите его ещё как-то дополнить.)");
         setTimeout(async () => {
-            await message.delete();
-            await interaction.deleteReply();
+            await interaction.deleteReply().catch(() => null);
+            await message.delete().catch(() => null);
         }, 20_000);
     };
 
