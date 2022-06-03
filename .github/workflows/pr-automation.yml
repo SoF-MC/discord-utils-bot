@@ -1,4 +1,4 @@
-name: Dependabot
+name: PR Automation
 
 on:
   pull_request:
@@ -12,16 +12,8 @@ jobs:
     name: Dependabot
     runs-on: ubuntu-latest
 
-    if: ${{ github.actor == 'dependabot[bot]' }}
-
     steps:
-      - name: Get Dependabot metadata
-        uses: dependabot/fetch-metadata@v1.1.1
-        id: metadata
-        with:
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
-
-      - name: Enable auto-merge for Dependabot PRs
+      - name: Enable auto-merge
         run: gh pr merge --auto --merge "$PR_URL"
         env:
           PR_URL: ${{github.event.pull_request.html_url}}
