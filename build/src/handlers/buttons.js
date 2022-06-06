@@ -91,6 +91,8 @@ const processButton = async (interaction) => {
         await ticketsModel.findOneAndUpdate({ channel: interaction.channel.id }, { $set: { closed: true } });
     }
     else if (buttonId === "tickets:accept") {
+        if ((await Util_1.default.mongoose.model("userdata").findOne({ user: interaction.user.id })).toJSON().permissions < 2)
+            return;
         const ticket = (await ticketsModel.findOne({ channel: interaction.channel.id })).toJSON();
         if (ticket.state !== 1) {
             if (!(await check(interaction)))
@@ -148,6 +150,8 @@ const processButton = async (interaction) => {
         ;
     }
     else if (buttonId === "tickets:delete") {
+        if ((await Util_1.default.mongoose.model("userdata").findOne({ user: interaction.user.id })).toJSON().permissions < 2)
+            return;
         await ticketsModel.findOneAndDelete({ channel: interaction.channel.id });
         await interaction.channel.delete();
     }

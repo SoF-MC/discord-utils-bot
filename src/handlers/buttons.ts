@@ -84,6 +84,9 @@ export const processButton = async (interaction: ButtonInteraction) => {
         });
         await ticketsModel.findOneAndUpdate({ channel: interaction.channel.id }, { $set: { closed: true } });
     } else if (buttonId === "tickets:accept") {
+        if (
+            ((await Util.mongoose.model("userdata").findOne({ user: interaction.user.id })).toJSON() as any as UserData).permissions < 2
+        ) return;
         const ticket = (await ticketsModel.findOne({ channel: interaction.channel.id })).toJSON() as any as TicketObject;
         if (ticket.state !== 1) {
             if (!(await check(interaction))) return;
@@ -136,6 +139,9 @@ export const processButton = async (interaction: ButtonInteraction) => {
             await Util.mongoose.model("userdata").findOneAndUpdate({ user: ticket.user }, { $set: { nickname: ticket.data.nickname, data: ticket.data } });
         };
     } else if (buttonId === "tickets:delete") {
+        if (
+            ((await Util.mongoose.model("userdata").findOne({ user: interaction.user.id })).toJSON() as any as UserData).permissions < 2
+        ) return;
         await ticketsModel.findOneAndDelete({ channel: interaction.channel.id });
         await interaction.channel.delete();
     } else if (buttonId === "tickets:setnick") {
