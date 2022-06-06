@@ -1,4 +1,6 @@
-import { ButtonInteraction, Message, MessageActionRow, MessageButton, TextChannel } from "discord.js";
+import { ButtonInteraction, Interaction, Message, MessageActionRow, MessageButton, TextChannel } from "discord.js";
+import { RCON } from "minecraft-server-util";
+import config from "../../config";
 import { TicketObject, UserData } from "../../types";
 import Util from "../util/Util";
 
@@ -8,16 +10,19 @@ export const processButton = async (interaction: ButtonInteraction) => {
     const ticketsModel = Util.mongoose.model("tickets");
 
     if (buttonId === "tickets:create") {
-        const ticket = await ticketsModel.findOne({ user: interaction.user.id });
-        if (![
-            "419892040726347776",       // djoh
-            "684472142804549637",       // padow
-            "602492362136092720",       // vladirus
-            "525748937349529602"        // srit
-        ].includes(interaction.user.id)) return await interaction.reply({
+        if (
+            ![
+                "419892040726347776",       // djoh
+                "684472142804549637",       // padow
+                "602492362136092720",       // vladirus
+                "525748937349529602"        // srit
+            ].includes(interaction.user.id) &&
+            !Util.database.global.get().ticketsEnabled
+        ) return await interaction.reply({
             content: "пошёл нахуй",
             ephemeral: true
         });
+        const ticket = await ticketsModel.findOne({ user: interaction.user.id });
         if (!ticket) {
             await interaction.reply({
                 content: "Создаю канал...",
@@ -32,7 +37,7 @@ export const processButton = async (interaction: ButtonInteraction) => {
                 parent: "962401942670282773"
             }) as TextChannel;
             await interaction.editReply("Канал создан, создаю записи в БД...");
-            await ticketsModel.create({ user: interaction.user.id, channel: channel.id });
+            await ticketsModel.create({ user: interaction.user.id, channel: channel.id, state: 0 });
             await interaction.editReply("Почти готово...");
             await channel.permissionOverwrites.create(interaction.user, { VIEW_CHANNEL: true });
             const originalMessage = await channel.send({
@@ -52,6 +57,7 @@ export const processButton = async (interaction: ButtonInteraction) => {
                     ])
                 ]
             });
+            await originalMessage.pin();
             await ticketsModel.findOneAndUpdate({ user: interaction.user.id }, { $set: { originalMessage: originalMessage.id } });
             await interaction.editReply("Готово!");
         } else await interaction.reply({
@@ -67,8 +73,8 @@ export const processButton = async (interaction: ButtonInteraction) => {
         if (
             ((await Util.mongoose.model("userdata").findOne({ user: interaction.user.id })).toJSON() as any as UserData).permissions < 2
         ) return;
-        const ticket = await ticketsModel.findOne({ channel: interaction.channel.id });
-        await interaction.channel.permissionOverwrites.delete((ticket.toJSON() as any).user);
+        const ticket = (await ticketsModel.findOne({ channel: interaction.channel.id })).toJSON() as any as TicketObject;
+        await interaction.channel.permissionOverwrites.delete(ticket.user);
         await interaction.channel.send({
             content: "ну чё обсуждайте хуле",
             components: [new MessageActionRow().addComponents([
@@ -79,12 +85,55 @@ export const processButton = async (interaction: ButtonInteraction) => {
         await ticketsModel.findOneAndUpdate({ channel: interaction.channel.id }, { $set: { closed: true } });
     } else if (buttonId === "tickets:accept") {
         const ticket = (await ticketsModel.findOne({ channel: interaction.channel.id })).toJSON() as any as TicketObject;
-        if (ticket.state === 0) {
-            await interaction.editReply("WIP");
-            return;
-        } else if (ticket.state === 1) {
-            await interaction.editReply("WIP");
-            return;
+        if (ticket.state !== 1) {
+            if (!(await check(interaction))) return;
+            await interaction.channel.send({
+                content: `<@${ticket.user}>,`,
+                embeds: [{
+                    author: {
+                        iconURL: interaction.user.avatarURL(),
+                        name: interaction.user.tag
+                    },
+                    title: "Вы прошли первый этап",
+                    description: "Когда будете готовы, нажимайте на кнопку \"Второй этап\"."
+                }]
+            })
+            await ticketsModel.findOneAndUpdate({ channel: interaction.channel.id }, { $set: { state: 1 } });
+        } else {
+            if (!(await check(interaction))) return;
+            const rcon = new RCON();
+            await interaction.editReply("Подключаюсь к серверу...");
+            await rcon.connect(config.rcon.host, config.rcon.port);
+            await rcon.login(config.rcon.password);
+            await interaction.editReply("Отправляю команду...");
+            const reply = await rcon.execute(`easywl add ${ticket.data.nickname}`);
+            rcon.close();
+            await interaction.editReply(`Ответ сервера: ${reply}`);
+            await interaction.channel.send({
+                content: `<@${ticket.user}>,`,
+                embeds: [{
+                    author: {
+                        iconURL: interaction.user.avatarURL(),
+                        name: interaction.user.tag
+                    },
+                    title: "Поздравляю!",
+                    description: [
+                        "Вы были приняты на сервер!",
+                        "Айпи: `soff.ml`",
+                        "Версия: Java Edition 1.18.x",
+                        "Карта: https://map.djoh.xyz"
+                    ].join("\n")
+                }]
+            });
+            const member = await interaction.guild.members.fetch(ticket.user);
+            await member.roles.add([
+                "764180192829767750",   // Пользователь
+                "791657594228965377"    // Игрок #SoF
+            ]).catch(() => null);
+            await member.roles.remove([
+                "764180408056414289"    // Гость
+            ]).catch(() => null);
+            await Util.mongoose.model("userdata").findOneAndUpdate({ user: ticket.user }, { $set: { nickname: ticket.data.nickname, data: ticket.data } });
         };
     } else if (buttonId === "tickets:delete") {
         await ticketsModel.findOneAndDelete({ channel: interaction.channel.id });
@@ -147,7 +196,7 @@ export const processButton = async (interaction: ButtonInteraction) => {
         await interaction.reply("У вас есть **2 минуты**, чтобы написать сколько планируете уделять времени серверу.");
         let timeout = setTimeout(async () =>
             await interaction.editReply("Время вышло.").then(async () => setTimeout(async () => await interaction.deleteReply().catch(() => null), 5_000)),
-            122_000
+            120_000
         );
         const message = (await interaction.channel.awaitMessages({ filter: (m) => m.author.id === interaction.user.id, max: 1, time: 120_000 })).first();
         if (!message) return;
@@ -171,12 +220,16 @@ export const processButton = async (interaction: ButtonInteraction) => {
         await interaction.editReply("Готово.");
         setTimeout(async () => await interaction.deleteReply().catch(() => null), 4_000);
     } else if (buttonId === "tickets:setlong") {
-        await interaction.reply("У вас есть **2 минуты**, чтобы написать сколько планируете уделять времени серверу.");
+        const ticket = (await ticketsModel.findOne({ channel: interaction.channel.id })).toJSON() as any as TicketObject;
+        if (ticket.state !== 1) return await interaction.reply("Вы ещё не прошли первый этап.")
+            .then(() => setTimeout(() => interaction.deleteReply(), 5_000));
+
+        await interaction.reply("У вас есть **10 минут**, чтобы написать краткое описание \"О себе\" и чем вы планируете заниматься на сервере.");
         let timeout = setTimeout(async () =>
             await interaction.editReply("Время вышло.").then(async () => setTimeout(async () => await interaction.deleteReply().catch(() => null), 5_000)),
-            122_000
+            600_000
         );
-        const message = (await interaction.channel.awaitMessages({ filter: (m) => m.author.id === interaction.user.id, max: 1, time: 120_000 })).first();
+        const message = (await interaction.channel.awaitMessages({ filter: (m) => m.author.id === interaction.user.id, max: 1, time: 600_000 })).first();
         if (!message) return;
         clearTimeout(timeout);
         const long = message.content;
@@ -202,7 +255,7 @@ export const processButton = async (interaction: ButtonInteraction) => {
     };
 
     async function updateMessage(message: Message) {
-        const ticket = ((await ticketsModel.findOne({ channel: message.channel.id })).toJSON() as any as TicketObject);
+        const ticket = (await ticketsModel.findOne({ channel: message.channel.id })).toJSON() as any as TicketObject;
 
         return await message.edit({
             embeds: [{
@@ -223,5 +276,23 @@ export const processButton = async (interaction: ButtonInteraction) => {
                 }]
             }]
         });
+    };
+    async function check(interaction: ButtonInteraction): Promise<boolean> {
+        const message = await interaction.reply({
+            content: "tochno?",
+            ephemeral: true,
+            fetchReply: true,
+            components: [
+                new MessageActionRow().addComponents([
+                    new MessageButton().setLabel("da").setStyle("SUCCESS").setCustomId("tickets:check:yes"),
+                    new MessageButton().setLabel("net").setStyle("DANGER").setCustomId("tickets:check:no")
+                ])
+            ]
+        }) as Message;
+        const collected = await message.awaitMessageComponent({
+            componentType: "BUTTON",
+            filter: (b) => b.user.id === interaction.user.id && b.customId === "tickets:check:yes" || b.customId === "tickets:check:no"
+        });
+        return collected.customId === "tickets:check:yes";
     };
 };

@@ -25,7 +25,8 @@ export interface UserData {
 }
 
 export interface GlobalObject {
-    ticketMessage: string
+    ticketMessage: string,
+    ticketsEnabled: boolean
 }
 
 export interface TicketObject {

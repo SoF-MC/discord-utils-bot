@@ -52,7 +52,7 @@ client.once("ready", async () => {
         .then(async (m) => await m.edit({
         embeds: [{
                 title: "Заявки",
-                description: "если ваша заявка будет хуетой то вы будете забанены нахуй",
+                description: "Чтобы попасть на сервер не тратив деньги, можно подать заявку, нажав на кнопку ниже.",
             }],
         components: [new discord_js_1.MessageActionRow().addComponents([
                 new discord_js_1.MessageButton()
@@ -64,7 +64,7 @@ client.once("ready", async () => {
         .catch(async () => await ticketChannel.send({
         embeds: [{
                 title: "Заявки",
-                description: "если ваша заявка будет хуетой то вы будете забанены нахуй",
+                description: "Чтобы попасть на сервер не тратив деньги, можно подать заявку, нажав на кнопку ниже.",
             }],
         components: [new discord_js_1.MessageActionRow().addComponents([
                 new discord_js_1.MessageButton()

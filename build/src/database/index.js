@@ -11,7 +11,7 @@ module.exports = {
     connection: mongoose_1.default.connect(config_1.default.database_uri),
     global: global_1.default,
     registerSchemas: () => {
-        Util_1.default.mongoose.model("tickets", new mongoose_1.default.Schema({ user: "", channel: "", closed: false, data: {} }, { minimize: true }));
+        Util_1.default.mongoose.model("tickets", new mongoose_1.default.Schema({ user: "", channel: "", state: 0, closed: false, data: {} }));
         Util_1.default.mongoose.model("userdata", new mongoose_1.default.Schema({ user: "", nickname: "", permissions: 0, ticketData: {} }, { minimize: true }));
     }
 };
