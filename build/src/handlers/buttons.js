@@ -236,7 +236,7 @@ const processButton = async (interaction) => {
     else if (buttonId === "tickets:setlong") {
         const ticket = (await ticketsModel.findOne({ channel: interaction.channel.id })).toJSON();
         if (ticket.state !== 1)
-            return await interaction.reply("Вы ещё не прошли первый этап.")
+            return await interaction.reply("Вы ещё не прошли первый этап. Подождите пока администрация одобрит Ваши ответы.")
                 .then(() => setTimeout(() => interaction.deleteReply(), 5000));
         await interaction.reply("У вас есть **10 минут**, чтобы написать краткое описание \"О себе\" и чем вы планируете заниматься на сервере.");
         let timeout = setTimeout(async () => await interaction.editReply("Время вышло.").then(async () => setTimeout(async () => await interaction.deleteReply().catch(() => null), 5000)), 600000);
