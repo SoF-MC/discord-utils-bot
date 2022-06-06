@@ -239,14 +239,6 @@ export const processButton = async (interaction: ButtonInteraction) => {
         if (!message) return;
         clearTimeout(timeout);
         const long = message.content;
-        if (
-            !long ||
-            (long.length > 512 && long.length < 16)
-        ) return await interaction.editReply("Длина ответа должна составлять от 16 до 512 символов.")
-            .then(() => setTimeout(async () => {
-                await interaction.deleteReply().catch(() => null);
-                await message.delete().catch(() => null);
-            }, 6_000));
         await interaction.editReply("Принято, обновляю в БД...");
         let { data } = ((await ticketsModel.findOne({ channel: interaction.channel.id })).toJSON() as any as TicketObject);
         if (!data) data = {};
