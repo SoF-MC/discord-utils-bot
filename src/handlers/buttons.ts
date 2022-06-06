@@ -40,6 +40,9 @@ export const processButton = async (interaction: ButtonInteraction) => {
             await ticketsModel.create({ user: interaction.user.id, channel: channel.id, state: 0 });
             await interaction.editReply("Почти готово...");
             await channel.permissionOverwrites.create(interaction.user, { VIEW_CHANNEL: true });
+            await channel.permissionOverwrites.create("529964966254739476", { VIEW_CHANNEL: true });    // streamking
+            await channel.permissionOverwrites.create("675429015141744675", { VIEW_CHANNEL: true });    // henr
+            await channel.permissionOverwrites.create("525748937349529602", { VIEW_CHANNEL: true });    // srit
             const originalMessage = await channel.send({
                 content: "Нажимайте на кнопки ниже чтобы заполнить заявку.",
                 components: [
@@ -65,6 +68,9 @@ export const processButton = async (interaction: ButtonInteraction) => {
             ephemeral: true
         });
     } else if (buttonId === "tickets:reopen") {
+        if (
+            ((await Util.mongoose.model("userdata").findOne({ user: interaction.user.id })).toJSON() as any as UserData).permissions < 2
+        ) return await interaction.reply({ content: "❌ У вас недостаточно прав.", ephemeral: true });
         const ticket = (await ticketsModel.findOne({ channel: interaction.channel.id })).toJSON() as any as TicketObject;
         await (interaction.message as Message).delete().catch(() => null);
         await interaction.channel.permissionOverwrites.create(ticket.user, { VIEW_CHANNEL: true });
@@ -72,7 +78,7 @@ export const processButton = async (interaction: ButtonInteraction) => {
     } else if (buttonId === "tickets:close") {
         if (
             ((await Util.mongoose.model("userdata").findOne({ user: interaction.user.id })).toJSON() as any as UserData).permissions < 2
-        ) return;
+        ) return await interaction.reply({ content: "❌ У вас недостаточно прав.", ephemeral: true });
         const ticket = (await ticketsModel.findOne({ channel: interaction.channel.id })).toJSON() as any as TicketObject;
         await interaction.channel.permissionOverwrites.delete(ticket.user);
         await interaction.channel.send({
@@ -86,7 +92,7 @@ export const processButton = async (interaction: ButtonInteraction) => {
     } else if (buttonId === "tickets:accept") {
         if (
             ((await Util.mongoose.model("userdata").findOne({ user: interaction.user.id })).toJSON() as any as UserData).permissions < 2
-        ) return;
+        ) return await interaction.reply({ content: "❌ У вас недостаточно прав.", ephemeral: true });
         const ticket = (await ticketsModel.findOne({ channel: interaction.channel.id })).toJSON() as any as TicketObject;
         if (ticket.state !== 1) {
             if (!(await check(interaction))) return;
@@ -141,7 +147,7 @@ export const processButton = async (interaction: ButtonInteraction) => {
     } else if (buttonId === "tickets:delete") {
         if (
             ((await Util.mongoose.model("userdata").findOne({ user: interaction.user.id })).toJSON() as any as UserData).permissions < 2
-        ) return;
+        ) return await interaction.reply({ content: "❌ У вас недостаточно прав.", ephemeral: true });
         await ticketsModel.findOneAndDelete({ channel: interaction.channel.id });
         await interaction.channel.delete();
     } else if (buttonId === "tickets:setnick") {
