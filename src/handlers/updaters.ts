@@ -1,13 +1,13 @@
 import { TextChannel } from "discord.js";
 import Util from "../util/Util";
-import serverutil from "minecraft-server-util";
+import { RCON } from "minecraft-server-util";
 import config from "../../config";
 
 export = () => {
     setInterval(() => updateStatusChannel(), 5 * 1000);
 };
 
-const statusChannelRcon = new serverutil.RCON();
+const statusChannelRcon = new RCON();
 async function updateStatusChannel() {
     const channel = Util.client.channels.cache.get("972838371128930324") as TextChannel;
     const message = await channel.messages.fetch("972838825636286464");
