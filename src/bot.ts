@@ -1,14 +1,15 @@
 require("nodejs-better-console").overrideConsole();
-import Discord, { MessageActionRow, MessageButton, TextChannel } from "discord.js";
+import  { Client, MessageActionRow, MessageButton, TextChannel } from "discord.js";
 import config from "../config";
 import { registerCommands } from "./handlers/commands";
-const client = new Discord.Client({
+const client = new Client({
     intents: ["GUILDS", "GUILD_MESSAGES", "GUILD_MEMBERS"],
     presence: { status: "dnd", activities: [{ type: "WATCHING", name: "загрузочный экран" }] }
 });
 import fs from "fs";
 import db from "./database/";
 import Util from "./util/Util";
+import updaters from "./handlers/updaters";
 
 Util.setClient(client).setDatabase(db);
 
@@ -58,6 +59,7 @@ client.once("ready", async () => {
     }));
 
     updatePresence();
+    updaters();
 });
 
 for (const file of fs.readdirSync(`${__dirname}/events`)) {
