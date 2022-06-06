@@ -13,6 +13,12 @@ export = {
                 .setDescription("Channel to export.")
                 .addChannelTypes(0, 5)
         )
+        .addIntegerOption(o =>
+            o
+                .setName("limit")
+                .setDescription("Limit the number of messages to export.")
+                .setMinValue(1)
+        )
         .toJSON(),
     permission: 5,
     run: async (interaction: CommandInteraction): Promise<void> => {
@@ -21,8 +27,8 @@ export = {
 
         const start = Date.now();
         const file = await createTranscript(channel, {
-            limit: -1,
-            returnBuffer: false,
+            limit: interaction.options.getInteger("limit") || 100,
+            returnType: "attachment",
             fileName: `${channel.name}-${Date.now()}.html`
         }) as MessageAttachment;
 
