@@ -39,6 +39,7 @@ const processButton = async (interaction) => {
                 rateLimitPerUser: 2,
                 parent: "962401942670282773"
             });
+            await channel.setName(`Заявка ${interaction.user.tag}`);
             await interaction.editReply("Канал создан, создаю записи в БД...");
             await ticketsModel.create({ user: interaction.user.id, channel: channel.id, state: 0 });
             await interaction.editReply("Почти готово...");
