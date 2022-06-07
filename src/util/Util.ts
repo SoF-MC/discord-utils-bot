@@ -13,6 +13,7 @@ class Util {
     private _mongoose: typeof import("mongoose");
     private _database: typeof import("../database/");
     public inspect = inspect;
+    public clearMcColors = (str: string) => str.replace(/\u00A7[0-9A-FK-OR]/g, "");
 
     public setClient(client: Client): Util {
         this._client = client;

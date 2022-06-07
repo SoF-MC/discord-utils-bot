@@ -126,7 +126,7 @@ const processButton = async (interaction) => {
             await interaction.editReply("Отправляю команду...");
             const reply = await rcon.execute(`easywl add ${ticket.data.nickname}`);
             rcon.close();
-            await interaction.editReply(`Ответ сервера: ${reply}`);
+            await interaction.editReply(`Ответ сервера: ${Util_1.default.clearMcColors(reply)}`);
             await interaction.channel.send({
                 content: `<@${ticket.user}>,`,
                 embeds: [{
