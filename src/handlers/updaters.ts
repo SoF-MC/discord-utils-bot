@@ -4,9 +4,9 @@ import { RCON } from "minecraft-server-util";
 import config from "../../config";
 
 export = () => {
-    updateStatusChannel();
+    //updateStatusChannel();
 
-    setInterval(() => updateStatusChannel(), 5 * 1000);
+    //setInterval(() => updateStatusChannel(), 5 * 1000);
 };
 
 const statusChannelRcon = new RCON();

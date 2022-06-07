@@ -32,6 +32,4 @@ async function updateStatusChannel() {
 }
 ;
 module.exports = () => {
-    updateStatusChannel();
-    setInterval(() => updateStatusChannel(), 5 * 1000);
 };
