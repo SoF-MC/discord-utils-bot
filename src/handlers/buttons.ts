@@ -28,7 +28,7 @@ export const processButton = async (interaction: ButtonInteraction) => {
                 content: "Создаю канал...",
                 ephemeral: true
             });
-            const channel = await interaction.guild.channels.create(`ticket-${interaction.user.tag}`, {
+            const channel = await interaction.guild.channels.create(`заявка-${interaction.user.tag}`, {
                 permissionOverwrites: [{
                     id: interaction.guild.id,
                     deny: ["VIEW_CHANNEL"],
@@ -36,7 +36,6 @@ export const processButton = async (interaction: ButtonInteraction) => {
                 rateLimitPerUser: 2,
                 parent: "962401942670282773"
             }) as TextChannel;
-            await channel.setName(`Заявка ${interaction.user.tag}`);
             await interaction.editReply("Канал создан, создаю записи в БД...");
             await ticketsModel.create({ user: interaction.user.id, channel: channel.id, state: 0 });
             await interaction.editReply("Почти готово...");
