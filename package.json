@@ -23,7 +23,7 @@
     "minecraft-server-util": "^5.2.9",
     "mongoose": "^6.2.10",
     "nodejs-better-console": "^1.0.2",
-    "pretty-ms": "^7.0.1"
+    "pretty-ms": "^8.0.0"
   },
   "devDependencies": {
     "typescript": "4.7.3"
