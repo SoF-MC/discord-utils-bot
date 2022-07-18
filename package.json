@@ -19,7 +19,7 @@
     "@discordjs/rest": "^0.5.0",
     "discord-api-types": "^0.34.0",
     "discord-html-transcripts": "^2.3.2",
-    "discord.js": "^13.6.0",
+    "discord.js": "^14.0.0",
     "minecraft-server-util": "^5.2.9",
     "mongoose": "^6.2.10",
     "nodejs-better-console": "^1.0.2",
