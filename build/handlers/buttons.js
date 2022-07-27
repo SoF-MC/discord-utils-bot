@@ -144,7 +144,11 @@ const processButton = async (interaction) => {
             });
             const member = await interaction.guild.members.fetch(ticket.user);
             await member.roles.add([
+                "764180192829767750",
                 "791657594228965377"
+            ]).catch(() => null);
+            await member.roles.remove([
+                "764180408056414289"
             ]).catch(() => null);
             await Util_1.default.mongoose.model("userdata").findOneAndUpdate({ user: ticket.user }, { $set: { nickname: ticket.data.nickname, data: ticket.data } });
         }

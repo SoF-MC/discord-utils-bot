@@ -136,11 +136,7 @@ export const processButton = async (interaction: ButtonInteraction) => {
             });
             const member = await interaction.guild.members.fetch(ticket.user);
             await member.roles.add([
-                "764180192829767750",   // Пользователь
                 "791657594228965377"    // Игрок #SoF
-            ]).catch(() => null);
-            await member.roles.remove([
-                "764180408056414289"    // Гость
             ]).catch(() => null);
             await Util.mongoose.model("userdata").findOneAndUpdate({ user: ticket.user }, { $set: { nickname: ticket.data.nickname, data: ticket.data } });
         };
