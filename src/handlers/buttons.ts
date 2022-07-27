@@ -128,9 +128,8 @@ export const processButton = async (interaction: ButtonInteraction) => {
                     title: "Поздравляю!",
                     description: [
                         "Вы были приняты на сервер!",
-                        "Айпи: `soff.ml`",
-                        "Версия: Java Edition 1.18.x",
-                        "Карта: https://map.djoh.xyz"
+                        "Айпи: `soff.ml` или `85.10.207.149`",
+                        "Версия: Java Edition 1.18.x"
                     ].join("\n")
                 }]
             });
