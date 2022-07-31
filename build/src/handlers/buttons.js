@@ -137,7 +137,8 @@ const processButton = async (interaction) => {
                         description: [
                             "Вы были приняты на сервер!",
                             "Айпи: `soff.ml` или `85.10.207.149`",
-                            "Версия: Java Edition 1.18.x"
+                            "Версия: Java Edition 1.18.x",
+                            "Сайт: [`soff.ml`](https://soff.ml)",
                         ].join("\n")
                     }]
             });
