@@ -10,7 +10,7 @@ module.exports = {
     permission: 5,
     run: async (interaction) => {
         await interaction.deferReply();
-        (0, child_process_1.exec)(interaction.options.get("script").value, async (error, stdout) => {
+        (0, child_process_1.exec)(interaction.options.getString("script"), async (error, stdout) => {
             await interaction.editReply(`\`\`\`${(error || stdout).toString().slice(0, 1994)}\`\`\``);
         });
     }

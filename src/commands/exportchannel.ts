@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { createTranscript } from "discord-html-transcripts";
-import { CommandInteraction, GuildTextBasedChannel, MessageAttachment } from "discord.js";
+import { ChatInputCommandInteraction, GuildTextBasedChannel } from "discord.js";
 import prettyms from "pretty-ms";
 
 export = {
@@ -21,16 +21,15 @@ export = {
         )
         .toJSON(),
     permission: 5,
-    run: async (interaction: CommandInteraction): Promise<void> => {
+    run: async (interaction: ChatInputCommandInteraction) => {
         const channel: GuildTextBasedChannel = interaction.options.getChannel("channel") as any || interaction.channel;
         await interaction.deferReply();
 
         const start = Date.now();
         const file = await createTranscript(channel, {
-            limit: interaction.options.getInteger("limit") || 100,
-            returnType: "attachment",
-            fileName: `${channel.name}-${Date.now()}.html`
-        }) as MessageAttachment;
+            limit: interaction.options.getInteger("limit") ?? 100,
+            filename: `${channel.name}-${Date.now()}.html`
+        });
 
         await interaction.editReply({
             content: `Exported \`${file.name}\` in ${prettyms(Date.now() - start)}.`,

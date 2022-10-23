@@ -24,9 +24,8 @@ module.exports = {
         await interaction.deferReply();
         const start = Date.now();
         const file = await (0, discord_html_transcripts_1.createTranscript)(channel, {
-            limit: interaction.options.getInteger("limit") || 100,
-            returnType: "attachment",
-            fileName: `${channel.name}-${Date.now()}.html`
+            limit: interaction.options.getInteger("limit") ?? 100,
+            filename: `${channel.name}-${Date.now()}.html`
         });
         await interaction.editReply({
             content: `Exported \`${file.name}\` in ${(0, pretty_ms_1.default)(Date.now() - start)}.`,

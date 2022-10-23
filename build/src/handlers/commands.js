@@ -4,18 +4,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.registerCommands = exports.processCommand = void 0;
-const rest_1 = require("@discordjs/rest");
 const v9_1 = require("discord-api-types/v9");
-const fs_1 = __importDefault(require("fs"));
+const rest_1 = require("@discordjs/rest");
 const config_1 = __importDefault(require("../../config"));
 const Util_1 = __importDefault(require("../util/Util"));
-const commands = [];
-const rest = new rest_1.REST({ version: "9" }).setToken(config_1.default.token);
+const fs_1 = __importDefault(require("fs"));
 const processCommand = async (interaction) => {
     const commandName = interaction.commandName;
     const commandFile = require(`../commands/${commandName}`);
     const user = (await Util_1.default.mongoose.model("userdata").findOne({ user: interaction.user.id })).toJSON();
-    if ((user.permissions || 0) < commandFile.permission)
+    if ((user.permissions ?? 0) < (commandFile.permission ?? 0))
         return await interaction.reply({ content: "❌ Недостаточно прав.", ephemeral: true });
     try {
         await commandFile.run(interaction);
@@ -26,6 +24,8 @@ const processCommand = async (interaction) => {
     ;
 };
 exports.processCommand = processCommand;
+const rest = new rest_1.REST({ version: "9" }).setToken(config_1.default.token);
+const commands = [];
 const registerCommands = async (client) => {
     const files = fs_1.default.readdirSync(`${__dirname}/../commands/`);
     for (let filename of files) {

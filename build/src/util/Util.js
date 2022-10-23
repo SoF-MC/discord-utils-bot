@@ -15,11 +15,6 @@ class Util {
         return this;
     }
     ;
-    setMongoose(mongoose) {
-        this._mongoose = mongoose;
-        return this;
-    }
-    ;
     setDatabase(database) {
         this._database = database;
         return this;
@@ -30,7 +25,7 @@ class Util {
     }
     ;
     get mongoose() {
-        return this._mongoose;
+        return require("mongoose");
     }
     ;
     get database() {

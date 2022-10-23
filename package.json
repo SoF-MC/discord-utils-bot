@@ -1,31 +1,29 @@
 {
-  "name": "discord-utils-bot",
-  "version": "1.0.0",
-  "description": "",
-  "main": "build/src/bot.js",
-  "scripts": {
-    "launch": "npx tsc && node .",
-    "build": "npx tsc",
-    "watch": "npx tsc -w"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/SoF-MC/discord-utils-bot.git"
-  },
-  "author": "alex",
-  "license": "GPL-3.0",
-  "dependencies": {
-    "@discordjs/builders": "^0.15.0",
-    "@discordjs/rest": "^0.5.0",
-    "discord-api-types": "^0.34.0",
-    "discord-html-transcripts": "^2.3.2",
-    "discord.js": "^13.6.0",
-    "minecraft-server-util": "^5.2.9",
-    "mongoose": "^6.2.10",
-    "nodejs-better-console": "^1.0.2",
-    "pretty-ms": "^7.0.1"
-  },
-  "devDependencies": {
-    "typescript": "4.7.3"
-  }
+    "name": "discord-utils-bot",
+    "version": "1.0.0",
+    "description": "",
+    "main": "build/src/",
+    "scripts": {
+        "build": "tsc",
+        "build:run": "tsc && node .",
+        "start": "node .",
+        "watch": "tsc -w"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/SoF-MC/discord-utils-bot.git"
+    },
+    "author": "alex",
+    "license": "GPL-3.0",
+    "dependencies": {
+        "discord-api-types": "^0.37.14",
+        "discord-html-transcripts": "^3.1.2",
+        "discord.js": "^14.6.0",
+        "mongoose": "^6.6.7",
+        "nodejs-better-console": "^1.0.2",
+        "pretty-ms": "^7.0.1"
+    },
+    "devDependencies": {
+        "typescript": "4.8.4"
+    }
 }

@@ -14,7 +14,6 @@ const client = new discord_js_1.Client({
 const fs_1 = __importDefault(require("fs"));
 const database_1 = __importDefault(require("./database/"));
 const Util_1 = __importDefault(require("./util/Util"));
-const updaters_1 = __importDefault(require("./handlers/updaters"));
 Util_1.default.setClient(client).setDatabase(database_1.default);
 global.client = client;
 global.db = database_1.default;
@@ -58,7 +57,6 @@ client.once("ready", async () => {
             await Util_1.default.mongoose.model("userdata").create({ user: member.id, permissions: 0 });
     }));
     updatePresence();
-    (0, updaters_1.default)();
 });
 for (const file of fs_1.default.readdirSync(`${__dirname}/events`)) {
     const event = require(`./events/${file}`);

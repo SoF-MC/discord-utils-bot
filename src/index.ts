@@ -1,14 +1,15 @@
 require("nodejs-better-console").overrideConsole();
-import { Client, MessageActionRow, MessageButton, TextChannel } from "discord.js";
-import config from "../config";
+import { ActivityType, Client, GatewayIntentBits, ActionRowBuilder, ButtonBuilder, TextChannel, ButtonStyle } from "discord.js";
 import { registerCommands } from "./handlers/commands";
-const client = new Client({
-    intents: ["GUILDS", "GUILD_MESSAGES", "GUILD_MEMBERS"],
-    presence: { status: "dnd", activities: [{ type: "WATCHING", name: "загрузочный экран" }] }
-});
-import fs from "fs";
-import db from "./database/";
+import config from "../config";
 import Util from "./util/Util";
+import db from "./database/";
+import fs from "fs";
+
+const client = new Client({
+    intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent],
+    presence: { status: "dnd", activities: [{ type: ActivityType.Watching, name: "загрузочный экран" }] }
+});
 
 Util.setClient(client).setDatabase(db);
 
@@ -22,32 +23,31 @@ client.once("ready", async () => {
         console.log("Refreshed commands");
     });
     await db.global.reload();
-    db.registerSchemas();
 
     const ticketChannel = client.channels.cache.get("962402003366051870") as TextChannel;
     await ticketChannel.messages.fetch(db.global.get().ticketMessage)
-        .then(async (m) => await m.edit({
+        .then((m) => m.edit({
             embeds: [{
                 title: "Заявки",
                 description: "Чтобы попасть на сервер не тратив деньги, можно подать заявку, нажав на кнопку ниже.",
             }],
-            components: [new MessageActionRow().addComponents([
-                new MessageButton()
+            components: [new ActionRowBuilder<ButtonBuilder>().addComponents([
+                new ButtonBuilder()
                     .setLabel("Создать заявку")
                     .setCustomId("tickets:create")
-                    .setStyle("PRIMARY")
+                    .setStyle(ButtonStyle.Primary)
             ])]
         }))
-        .catch(async () => await ticketChannel.send({
+        .catch(() => ticketChannel.send({
             embeds: [{
                 title: "Заявки",
                 description: "Чтобы попасть на сервер не тратив деньги, можно подать заявку, нажав на кнопку ниже.",
             }],
-            components: [new MessageActionRow().addComponents([
-                new MessageButton()
+            components: [new ActionRowBuilder<ButtonBuilder>().addComponents([
+                new ButtonBuilder()
                     .setLabel("Создать заявку")
                     .setCustomId("tickets:create")
-                    .setStyle("PRIMARY")
+                    .setStyle(ButtonStyle.Primary)
             ])]
         }).then((m) => db.global.set("ticketMessage", m.id)));
 
@@ -58,6 +58,7 @@ client.once("ready", async () => {
     }));
 
     updatePresence();
+    setInterval(() => updatePresence(), 1000 * 60);
 });
 
 for (const file of fs.readdirSync(`${__dirname}/events`)) {
@@ -66,7 +67,7 @@ for (const file of fs.readdirSync(`${__dirname}/events`)) {
     client.on(eventName, event);
 };
 
-const updatePresence = () => client.user.setPresence({ status: "online", activities: [{ type: "WATCHING", name: "#SoF 4?" }] });
+const updatePresence = () => client.user.setPresence({ status: "online", activities: [{ type: ActivityType.Watching, name: "#SoF 4?" }] });
 
 client.on("rateLimit", (rateLimitInfo) => console.warn(`Rate limited.\n${JSON.stringify(rateLimitInfo)}`));
 client.on("warn", (info) => console.warn(`Warning. ${info}`));

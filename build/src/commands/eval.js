@@ -10,7 +10,7 @@ module.exports = {
     run: async (interaction) => {
         await interaction.deferReply();
         try {
-            let evaled = await eval("const Util = require('../util/Util'); " + interaction.options.get("script").value);
+            let evaled = await eval("const Util = require('../util/Util'); " + interaction.options.getString("script"));
             if (typeof evaled != "string")
                 evaled = require("util").inspect(evaled);
             if (evaled.length >= 2000)
