@@ -44,7 +44,7 @@ export = {
                     ephemeral: true
                 });
 
-                await user.update({ $set: { registered: true } });
+                await user.updateOne({ $set: { registered: true } });
             } else {
                 await channel.send(`l!config auth.std.core changePassword ${user.nickname} ${password}`);
                 // const reply = (await channel.awaitMessages({ filter, time: 1000 * 1, max: 1 })).first();

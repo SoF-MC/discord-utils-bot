@@ -75,3 +75,4 @@ client.on("warn", (info) => console.warn(`Warning. ${info}`));
 db.connection.then(() => client.login(config.token));
 
 process.on("unhandledRejection", (rej) => console.error(rej));
+process.on("uncaughtException", (rej) => console.error(rej));
