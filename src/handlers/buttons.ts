@@ -188,6 +188,13 @@ export const processButton = async (interaction: ButtonInteraction) => {
                 await message.delete().catch(() => null);
             }, 5_000));
 
+        if (await UserData.findOne({ nickname: nick.trim() }))
+            return await interaction.editReply("Этот никнейм уже используется.")
+                .then(() => setTimeout(async () => {
+                    await interaction.deleteReply().catch(() => null);
+                    await message.delete().catch(() => null);
+                }, 5_000));
+
         await message.delete().catch(() => null);
         await interaction.editReply("Никнейм принят, обновляю в БД...");
 
