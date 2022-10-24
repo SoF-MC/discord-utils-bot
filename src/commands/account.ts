@@ -49,7 +49,19 @@ export = {
                 await channel.send(`l!config auth.std.core changePassword ${user.nickname} ${password}`);
                 // const reply = (await channel.awaitMessages({ filter, time: 1000 * 1, max: 1 })).first();
 
-                await interaction.reply({ content: "ебать", ephemeral: true });
+                await interaction.reply({
+                    embeds: [{
+                        title: "Пароль изменён",
+                        fields: [{
+                            name: "Логин",
+                            value: `\`${user.nickname}\``
+                        }, {
+                            name: "Новый пароль",
+                            value: `||\`${password}\`||`
+                        }]
+                    }],
+                    ephemeral: true
+                });
             };
         };
     }
