@@ -3,22 +3,23 @@
         "allowJs": false,
         "esModuleInterop": true,
         "experimentalDecorators": true,
-        "incremental": true,
-        "forceConsistentCasingInFileNames": true,
         "lib": [
-            "ES2020",
-            "ES2021",
-            "ESNext"
+            "ES2022"
         ],
-        "module": "commonjs",
+        "module": "CommonJS",
+        "rootDir": "./src",
         "outDir": "./build",
-        "strict": false,
-        "strictPropertyInitialization": false,
-        "skipLibCheck": true,
-        "target": "ES2020",
+        "strict": true,
+        "target": "ES2022",
         "removeComments": true,
-    },
-    "include": [
-        "./src"
-    ]
+        "noUnusedLocals": true,
+        "pretty": true,
+        "newLine": "lf",
+        "noImplicitOverride": true,
+        "noFallthroughCasesInSwitch": true,
+        "noUncheckedIndexedAccess": true,
+        "noPropertyAccessFromIndexSignature": true,
+        "noEmitOnError": true,
+        "skipLibCheck": true
+    }
 }

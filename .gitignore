@@ -223,6 +223,5 @@ $RECYCLE.BIN/
 # custom
 
 build
-**/config*
 .idea
 target

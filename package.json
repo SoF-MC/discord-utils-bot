@@ -1,29 +1,36 @@
 {
-    "name": "discord-utils-bot",
+    "name": "@sof-mc/bot",
     "version": "1.0.0",
     "description": "",
-    "main": "build/src/",
+    "main": "build/",
     "scripts": {
-        "build": "tsc",
-        "build:run": "tsc && node .",
-        "start": "node .",
-        "watch": "tsc -w"
+        "build": "yarn clean && tsc",
+        "build:run": "yarn build && yarn start",
+        "build:watch": "tsc -w",
+        "clean": "rm -rf build",
+        "dev": "tsc-watch --noClear --onSuccess \"yarn start\"",
+        "start": "node --no-warnings ."
     },
     "repository": {
         "type": "git",
         "url": "git+https://github.com/SoF-MC/discord-utils-bot.git"
     },
-    "author": "alex",
+    "author": "djoh",
     "license": "GPL-3.0",
     "dependencies": {
-        "discord-api-types": "^0.37.14",
+        "@typegoose/typegoose": "^10.0.0",
+        "axios": "^1.2.3",
         "discord-html-transcripts": "^3.1.2",
-        "discord.js": "^14.6.0",
-        "mongoose": "^6.6.7",
-        "nodejs-better-console": "^1.0.2",
-        "pretty-ms": "^7.0.1"
+        "discord.js": "^14.7.1",
+        "dotenv": "^16.0.3",
+        "minecraft-server-util": "^5.3.2",
+        "mongoose": "~6.8.0",
+        "pretty-ms": "^7.0.1",
+        "winston": "^3.8.2",
+        "winston-daily-rotate-file": "^4.7.1"
     },
     "devDependencies": {
+        "@types/node": "^18.11.18",
         "typescript": "4.8.4"
     }
 }

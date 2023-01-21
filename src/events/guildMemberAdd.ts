@@ -1,11 +1,7 @@
 import { GuildMember, TextChannel } from "discord.js";
-import Util from "../util/Util";
 
-export = async (member: GuildMember) => {
+export async function run(member: GuildMember) {
     if (member.guild.id !== "764178286233518100") return;
-
-    if (!(await Util.mongoose.model("userdata").findOne({ user: member.id })))
-        await Util.mongoose.model("userdata").create({ user: member.id, permissions: 0 });
 
     const channel = member.guild.channels.cache.get("764179432147124304") as TextChannel;
 

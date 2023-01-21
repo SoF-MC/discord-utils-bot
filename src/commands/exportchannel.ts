@@ -21,7 +21,7 @@ export = {
         )
         .toJSON(),
     permission: 5,
-    run: async (interaction: ChatInputCommandInteraction) => {
+    run: async (interaction: ChatInputCommandInteraction<"cached">) => {
         const channel: GuildTextBasedChannel = interaction.options.getChannel("channel") as any || interaction.channel;
         await interaction.deferReply();
 

@@ -8,7 +8,7 @@ export = {
         .setDescription("Get latency of the bot.")
         .toJSON(),
     permission: 0,
-    run: async (interaction: ChatInputCommandInteraction) => {
+    run: async (interaction: ChatInputCommandInteraction<"cached">) => {
         const server = Date.now() - interaction.createdTimestamp;
         const uptime = prettyms(interaction.client.uptime);
         const api = interaction.guild.shard.ping;
