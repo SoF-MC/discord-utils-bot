@@ -1,11 +1,12 @@
 import { ApplicationCommandOptionType } from "discord.js";
-import type { SecondLevelChatInputCommand } from "..";
+import type { ChatInputCommand } from "..";
 import { getUserDocument } from "../../../database/user";
 import AccountHandler from "../../../handlers/AccountHandler";
 
 export default {
     name: "setpassword",
     description: "поставить пароль",
+    public: true,
     options: [{
         name: "password",
         description: "пароль",
@@ -42,4 +43,4 @@ export default {
             }]
         });
     }
-} satisfies SecondLevelChatInputCommand;
+} satisfies ChatInputCommand;

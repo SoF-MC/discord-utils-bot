@@ -9,7 +9,7 @@ export default function chatInputCommandHandler(interaction: ChatInputCommandInt
     if (command && hierarchy[2] && "subcommands" in command) command = command.subcommands.find(({ name }) => name === hierarchy[2]);
 
     if (command && "execute" in command) {
-        if (!command.public && !config.owners.includes(interaction.user.id)) return;
+        if (!command.public && !config.owners.includes(interaction.user.id)) return void interaction.reply({ content: "Эта команда недоступна для вас", ephemeral: true });
         return void command.execute(interaction);
     }
 }
