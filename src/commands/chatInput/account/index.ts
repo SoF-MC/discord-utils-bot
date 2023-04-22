@@ -8,5 +8,6 @@ const accountSubcommands = readdirSync(__dirname)
 export default {
     name: "account",
     description: "аккаунт",
+    public: true,
     subcommands: accountSubcommands
 } satisfies FirstLevelChatInputCommand;
