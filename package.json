@@ -4,10 +4,10 @@
     "description": "",
     "main": "build/",
     "scripts": {
-        "build": "yarn clean && tsc",
+        "build": "tsc",
         "build:run": "yarn build && yarn start",
         "build:watch": "tsc -w",
-        "clean": "rm -rf build",
+        "build:production": "rm -rf build && yarn build",
         "dev": "tsc-watch --noClear --onSuccess \"yarn start\"",
         "start": "node --no-warnings ."
     },
@@ -17,6 +17,20 @@
     },
     "author": "djoh",
     "license": "GPL-3.0",
-    "dependencies": {},
-    "devDependencies": {}
+    "dependencies": {
+        "@sapphire/type": "^2.3.0",
+        "@typegoose/typegoose": "^11.0.2",
+        "dedent": "^0.7.0",
+        "discord.js": "^14.9.0",
+        "dotenv": "^16.0.3",
+        "mongoose": "~7.0.3",
+        "winston": "^3.8.2",
+        "winston-daily-rotate-file": "^4.7.1"
+    },
+    "devDependencies": {
+        "@types/dedent": "^0.7.0",
+        "@types/node": "^18.15.13",
+        "tsc-watch": "^6.0.0",
+        "typescript": "^5.0.4"
+    }
 }
