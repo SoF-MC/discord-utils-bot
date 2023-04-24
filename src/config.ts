@@ -7,6 +7,7 @@ export default {
     owners: String(process.env["OWNERS"]).split(",") as [string, ...string[]],
     autoregChannelId: String(process.env["AUTOREG_CHANNEL_ID"]),
     guildId: String(process.env["GUILD_ID"]),
+    playerRoleId: String(process.env["PLAYER_ROLE_ID"]),
 
     hastebin: String(process.env["HASTEBIN_URL"]),
 
