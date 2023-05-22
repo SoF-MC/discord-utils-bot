@@ -1,8 +1,10 @@
 import { Client, IntentsBitField, Partials } from "discord.js";
+import fs from "node:fs/promises";
 import { inspect } from "util";
 import connection from "./database";
 import handleInteractions from "./handlers/interactions";
 import handleMentionCommands from "./handlers/mentionCommands";
+import "./handlers/server";
 import discordLogger from "./utils/logger/discord";
 import mainLogger from "./utils/logger/main";
 
@@ -32,5 +34,7 @@ client
 process
     .on("uncaughtException", error => mainLogger.warn(`Uncaught exception: ${inspect(error)}`))
     .on("unhandledRejection", error => mainLogger.warn(`Unhandled rejection: ${inspect(error)}`));
+
+void fs.stat("./playerdata").catch(() => fs.mkdir("./playerdata"));
 
 void connection.then(() => void client.login());

@@ -4,6 +4,8 @@ export default {
     token: String(process.env["DISCORD_TOKEN"]),
     database: String(process.env["DATABASE_URI"]),
 
+    port: Number(process.env["PORT"]),
+
     owners: String(process.env["OWNERS"]).split(",") as [string, ...string[]],
     autoregChannelId: String(process.env["AUTOREG_CHANNEL_ID"]),
     guildId: String(process.env["GUILD_ID"]),
