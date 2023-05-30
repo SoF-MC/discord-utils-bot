@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { createTranscript } from "discord-html-transcripts";
 import { ChatInputCommandInteraction, GuildTextBasedChannel } from "discord.js";
-import prettyms from "pretty-ms";
+import ms from "ms";
 
 export = {
     options: new SlashCommandBuilder()
@@ -32,7 +32,7 @@ export = {
         });
 
         await interaction.editReply({
-            content: `Exported \`${file.name}\` in ${prettyms(Date.now() - start)}.`,
+            content: `Exported \`${file.name}\` in ${ms(Date.now() - start)}.`,
             files: [file]
         })
     }

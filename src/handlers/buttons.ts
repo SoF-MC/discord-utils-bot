@@ -1,7 +1,7 @@
 import { ButtonInteraction, ComponentType, Message, ActionRowBuilder, ButtonBuilder, PermissionFlagsBits, ButtonStyle } from "discord.js";
 import { getGlobalDocument, getUserDocument, Ticket, User } from "../database";
 import { clearMcColors } from "../constants";
-import { RCON } from "minecraft-server-util";
+import { RCON } from "mc-server-utilities";
 import config from "../config";
 
 export const processButton = async (interaction: ButtonInteraction<"cached">) => {
@@ -24,7 +24,7 @@ export const processButton = async (interaction: ButtonInteraction<"cached">) =>
             ].includes(interaction.user.id) &&
             !globalDocument.ticketsEnabled
         ) return await interaction.reply({
-            content: "пошёл нахуй",
+            content: "завтра",
             ephemeral: true
         });
 
@@ -51,25 +51,20 @@ export const processButton = async (interaction: ButtonInteraction<"cached">) =>
             await interaction.editReply("Почти готово...");
 
             await channel.permissionOverwrites.create(interaction.user, { ViewChannel: true });
-            await channel.permissionOverwrites.create(
-                await interaction.client.users.fetch("529964966254739476"),
-                { ViewChannel: true }
-            ); // streamking
 
             const originalMessage = await channel.send({
                 content: "Нажимайте на кнопки ниже чтобы заполнить заявку.",
                 components: [
                     new ActionRowBuilder<ButtonBuilder>().addComponents([
-                        new ButtonBuilder().setLabel("user:").setCustomId("dummy_g2HVZR").setStyle(ButtonStyle.Secondary).setDisabled(true),
-                        new ButtonBuilder().setLabel("Первый вопрос").setCustomId("tickets:setnick").setStyle(ButtonStyle.Primary),
-                        new ButtonBuilder().setLabel("Второй вопрос").setCustomId("tickets:setage").setStyle(ButtonStyle.Primary),
-                        new ButtonBuilder().setLabel("Третий вопрос").setCustomId("tickets:setshort").setStyle(ButtonStyle.Primary),
-                        new ButtonBuilder().setLabel("Второй этап").setCustomId("tickets:setlong").setStyle(ButtonStyle.Primary),
+                        new ButtonBuilder().setLabel("1").setCustomId("tickets:1").setStyle(ButtonStyle.Primary),
+                        new ButtonBuilder().setLabel("2").setCustomId("tickets:2").setStyle(ButtonStyle.Primary),
+                        new ButtonBuilder().setLabel("3").setCustomId("tickets:3").setStyle(ButtonStyle.Primary),
+                        new ButtonBuilder().setLabel("4").setCustomId("tickets:4").setStyle(ButtonStyle.Primary),
+                        new ButtonBuilder().setLabel("5").setCustomId("tickets:5").setStyle(ButtonStyle.Primary)
                     ]),
                     new ActionRowBuilder<ButtonBuilder>().addComponents([
-                        new ButtonBuilder().setLabel("admin:").setCustomId("dummy_U4Fr8y").setStyle(ButtonStyle.Secondary).setDisabled(true),
-                        new ButtonBuilder().setLabel("Принять").setCustomId("tickets:accept").setStyle(ButtonStyle.Success),
-                        new ButtonBuilder().setLabel("Закрыть").setCustomId("tickets:close").setStyle(ButtonStyle.Danger)
+                        new ButtonBuilder().setLabel("да").setCustomId("tickets:accept").setStyle(ButtonStyle.Success),
+                        new ButtonBuilder().setLabel("нет").setCustomId("tickets:close").setStyle(ButtonStyle.Danger)
                     ])
                 ]
             });
@@ -103,7 +98,7 @@ export const processButton = async (interaction: ButtonInteraction<"cached">) =>
         await interaction.channel!.permissionOverwrites.delete(ticket.user);
 
         await interaction.reply({
-            content: "ну чё обсуждайте хуле",
+            content: "ок",
             components: [new ActionRowBuilder<ButtonBuilder>().addComponents([
                 new ButtonBuilder().setLabel("открыть обратно").setCustomId("tickets:reopen").setStyle(ButtonStyle.Success),
                 new ButtonBuilder().setLabel("удалить нахуй").setCustomId("tickets:delete").setStyle(ButtonStyle.Danger)
@@ -118,56 +113,37 @@ export const processButton = async (interaction: ButtonInteraction<"cached">) =>
 
         const ticket = (await Ticket.findOne({ channel: interaction.channel!.id }))!;
 
-        if (ticket.state !== 1) {
-            if (!(await check(interaction))) return;
+        if (!(await check(interaction))) return;
 
-            await interaction.channel!.send({
-                content: `<@${ticket.user}>,`,
-                embeds: [{
-                    author: {
-                        icon_url: interaction.user.displayAvatarURL(),
-                        name: interaction.user.tag
-                    },
-                    title: "Вы прошли первый этап",
-                    description: "Когда будете готовы, нажимайте на кнопку \"Второй этап\"."
-                }]
-            });
+        const anotherUserDocument = await getUserDocument(ticket.user);
+        anotherUserDocument.nickname = ticket.data.nickname;
+        anotherUserDocument.safeSave();
 
-            await ticket.updateOne({ $set: { state: 1 } });
-        } else {
-            if (!(await check(interaction))) return;
+        const rcon = new RCON();
+        await rcon.connect(config.rcon.host, config.rcon.port);
+        await rcon.login(config.rcon.password);
+        const result = await rcon.execute(`easywl add ${ticket.data.nickname}`);
+        rcon.close();
 
-            const anotherUserDocument = await getUserDocument(ticket.user);
-            anotherUserDocument.nickname = ticket.data.nickname;
-            anotherUserDocument.safeSave();
+        await interaction.editReply(clearMcColors(result));
 
-            const rcon = new RCON();
-            await rcon.connect(config.rcon.host, config.rcon.port);
-            await rcon.login(config.rcon.password);
-            const result = await rcon.execute(`easywl add ${ticket.data.nickname}`);
-            rcon.close();
+        await interaction.channel!.send({
+            content: `<@${ticket.user}>,`,
+            embeds: [{
+                author: {
+                    icon_url: interaction.user.displayAvatarURL(),
+                    name: interaction.user.tag
+                },
+                title: "Поздравляю!",
+                description: [
+                    "Вы были приняты на сервер!",
+                    "Данные для входа:",
+                    "Айпи сервера: `soff.pro`"
+                ].join("\n")
+            }]
+        });
 
-            await interaction.editReply(clearMcColors(result));
-
-            await interaction.channel!.send({
-                content: `<@${ticket.user}>,`,
-                embeds: [{
-                    author: {
-                        icon_url: interaction.user.displayAvatarURL(),
-                        name: interaction.user.tag
-                    },
-                    title: "Поздравляю!",
-                    description: [
-                        "Вы были приняты на сервер!",
-                        "Данные для входа:",
-                        "Айпи сервера: `soff.ml`",
-                        "Сайт: [`soff.ml`](https://soff.ml)"
-                    ].join("\n")
-                }]
-            });
-
-            await interaction.guild.members.addRole({ user: ticket.user, role: "791657594228965377" }).catch(() => null);
-        };
+        await interaction.guild.members.addRole({ user: ticket.user, role: "791657594228965377" }).catch(() => null);
     } else if (buttonId === "tickets:delete") {
         if (
             userDocument.permissions < 2
@@ -176,7 +152,40 @@ export const processButton = async (interaction: ButtonInteraction<"cached">) =>
         await Ticket.deleteOne({ channel: interaction.channel!.id });
 
         await interaction.channel!.delete();
-    } else if (buttonId === "tickets:setnick") {
+    } else if (buttonId === "tickets:1") {
+        await interaction.reply("У вас есть **10 секунд**, чтобы написать свой возраст в этом канале.");
+        let timeout = setTimeout(() =>
+            interaction.editReply("Время вышло.").then(() => setTimeout(() => interaction.deleteReply().catch(() => null), 5_000)),
+            10_000
+        );
+        const message = (await interaction.channel!.awaitMessages({ filter: (m) => m.author.id === interaction.user.id, max: 1, time: 10_000 })).first();
+        if (!message) return;
+        clearTimeout(timeout);
+        const age = message.content.match(/^[0-9]{2}$/mg)?.[0];
+
+        if (
+            !age ||
+            age.length !== message.content.length
+        ) return await interaction.editReply("Возраст должен состоять из цифр, не менее и не более 2 символов.")
+            .then(() => setTimeout(() => {
+                interaction.deleteReply().catch(() => null);
+                message.delete().catch(() => null);
+            }, 5_000));
+
+        await message.delete().catch(() => null);
+        await interaction.editReply("Возраст принят, обновляю в БД...");
+
+        const ticket = (await Ticket.findOne({ channel: interaction.channel!.id }))!;
+
+        ticket.data.age = parseInt(age);
+
+        await ticket.save();
+
+        await updateMessage(interaction.message);
+        await interaction.editReply("Готово.");
+
+        setTimeout(() => interaction.deleteReply().catch(() => null), 5_000);
+    } else if (buttonId === "tickets:2") {
         await interaction.reply("У вас есть **30 секунд**, чтобы написать свой желаемый никнейм в этом канале.");
         let timeout = setTimeout(() =>
             interaction.editReply("Время вышло.").then(() => setTimeout(() => interaction.deleteReply().catch(() => null), 5_000)),
@@ -216,41 +225,8 @@ export const processButton = async (interaction: ButtonInteraction<"cached">) =>
         await interaction.editReply("Готово.");
 
         setTimeout(() => interaction.deleteReply().catch(() => null), 5_000);
-    } else if (buttonId === "tickets:setage") {
-        await interaction.reply("У вас есть **10 секунд**, чтобы написать свой возраст в этом канале.");
-        let timeout = setTimeout(() =>
-            interaction.editReply("Время вышло.").then(() => setTimeout(() => interaction.deleteReply().catch(() => null), 5_000)),
-            10_000
-        );
-        const message = (await interaction.channel!.awaitMessages({ filter: (m) => m.author.id === interaction.user.id, max: 1, time: 10_000 })).first();
-        if (!message) return;
-        clearTimeout(timeout);
-        let age = message.content?.match(/^[0-9]{2}$/mg)?.[0];
-
-        if (
-            !age ||
-            age.length !== message.content.length
-        ) return await interaction.editReply("Возраст должен состоять из цифр, не менее и не более 2 символов.")
-            .then(() => setTimeout(() => {
-                interaction.deleteReply().catch(() => null);
-                message.delete().catch(() => null);
-            }, 5_000));
-
-        await message.delete().catch(() => null);
-        await interaction.editReply("Возраст принят, обновляю в БД...");
-
-        const ticket = (await Ticket.findOne({ channel: interaction.channel!.id }))!;
-
-        ticket.data.age = parseInt(age);
-
-        await ticket.save();
-
-        await updateMessage(interaction.message);
-        await interaction.editReply("Готово.");
-
-        setTimeout(() => interaction.deleteReply().catch(() => null), 5_000);
-    } else if (buttonId === "tickets:setshort") {
-        await interaction.reply("У вас есть **2 минуты**, чтобы написать сколько планируете уделять времени серверу.");
+    } else if (buttonId === "tickets:3") {
+        await interaction.reply("Откуда Вы узнали о нас? У вас есть 2 минуты.");
         let timeout = setTimeout(() =>
             interaction.editReply("Время вышло.").then(() => setTimeout(() => interaction.deleteReply().catch(() => null), 5_000)),
             120_000
@@ -260,12 +236,12 @@ export const processButton = async (interaction: ButtonInteraction<"cached">) =>
         if (!message) return;
 
         clearTimeout(timeout);
-        const short = message.content;
+        const otkuda = message.content;
 
         if (
-            !short ||
-            (short.length > 512 && short.length < 16)
-        ) return await interaction.editReply("Длина ответа должна составлять от 16 до 512 символов.")
+            !otkuda ||
+            (otkuda.length > 512 && otkuda.length < 8)
+        ) return await interaction.editReply("Длина ответа должна составлять от 8 до 512 символов.")
             .then(() => setTimeout(() => {
                 interaction.deleteReply().catch(() => null);
                 message.delete().catch(() => null);
@@ -276,7 +252,7 @@ export const processButton = async (interaction: ButtonInteraction<"cached">) =>
 
         const ticket = (await Ticket.findOne({ channel: interaction.channel!.id }))!;
 
-        ticket.data.short = short;
+        ticket.data.otkuda = otkuda;
 
         await ticket.save();
 
@@ -284,13 +260,8 @@ export const processButton = async (interaction: ButtonInteraction<"cached">) =>
 
         await interaction.editReply("Готово.");
         setTimeout(() => interaction.deleteReply().catch(() => null), 5_000);
-    } else if (buttonId === "tickets:setlong") {
-        const ticket = (await Ticket.findOne({ channel: interaction.channel!.id }))!;
-
-        if (ticket.state !== 1) return await interaction.reply("Вы ещё не прошли первый этап. Подождите пока администрация одобрит Ваши ответы.")
-            .then(() => setTimeout(() => interaction.deleteReply(), 5_000));
-
-        await interaction.reply("У вас есть **10 минут**, чтобы написать краткое описание \"О себе\" и чем вы планируете заниматься на сервере.");
+    } else if (buttonId === "tickets:4") {
+        await interaction.reply("Кем вы видите себя на сервере? (Строитель, проектировщик, таскатель ресурсов и т.д). У вас есть 10 минут.");
         let timeout = setTimeout(() =>
             interaction.editReply("Время вышло.").then(() => setTimeout(() => interaction.deleteReply().catch(() => null), 5_000)),
             600_000
@@ -298,23 +269,67 @@ export const processButton = async (interaction: ButtonInteraction<"cached">) =>
 
         const message = (await interaction.channel!.awaitMessages({ filter: (m) => m.author.id === interaction.user.id, max: 1, time: 600_000 })).first();
         if (!message) return;
-        clearTimeout(timeout);
-        const long = message.content;
 
+        clearTimeout(timeout);
+        const kto = message.content;
+
+        if (
+            !kto ||
+            (kto.length > 1024 && kto.length < 8)
+        ) return await interaction.editReply("Длина ответа должна составлять от 8 до 1024 символов.")
+            .then(() => setTimeout(() => {
+                interaction.deleteReply().catch(() => null);
+                message.delete().catch(() => null);
+            }, 6_000));
+
+        await message.delete().catch(() => null);
         await interaction.editReply("Принято, обновляю в БД...");
 
-        ticket.data.long = long;
+        const ticket = (await Ticket.findOne({ channel: interaction.channel!.id }))!;
+
+        ticket.data.kto = kto;
 
         await ticket.save();
 
         await updateMessage(interaction.message);
 
-        await interaction.editReply("Готово. (У вас есть 20 секунд, чтобы скопировать сообщение, в случае если хотите его ещё как-то дополнить.)");
+        await interaction.editReply("Готово.");
+        setTimeout(() => interaction.deleteReply().catch(() => null), 5_000);
+    } else if (buttonId === "tickets:5") {
+        await interaction.reply("Сколько времени Вы готовы уделять серверу? У Вас есть 2 минуты.");
+        let timeout = setTimeout(() =>
+            interaction.editReply("Время вышло.").then(() => setTimeout(() => interaction.deleteReply().catch(() => null), 5_000)),
+            120_000
+        );
 
-        setTimeout(() => {
-            interaction.deleteReply().catch(() => null);
-            message.delete().catch(() => null);
-        }, 20_000);
+        const message = (await interaction.channel!.awaitMessages({ filter: (m) => m.author.id === interaction.user.id, max: 1, time: 120_000 })).first();
+        if (!message) return;
+
+        clearTimeout(timeout);
+        const skolko = message.content;
+
+        if (
+            !skolko ||
+            (skolko.length > 512 && skolko.length < 8)
+        ) return await interaction.editReply("Длина ответа должна составлять от 8 до 512 символов.")
+            .then(() => setTimeout(() => {
+                interaction.deleteReply().catch(() => null);
+                message.delete().catch(() => null);
+            }, 6_000));
+
+        await message.delete().catch(() => null);
+        await interaction.editReply("Принято, обновляю в БД...");
+
+        const ticket = (await Ticket.findOne({ channel: interaction.channel!.id }))!;
+
+        ticket.data.skolko = skolko;
+
+        await ticket.save();
+
+        await updateMessage(interaction.message);
+
+        await interaction.editReply("Готово.");
+        setTimeout(() => interaction.deleteReply().catch(() => null), 5_000);
     };
 };
 
@@ -332,11 +347,14 @@ async function updateMessage(message: Message<true>) {
                 value: `\`${ticket.data.age || "Пусто"}\``,
                 inline: true
             }, {
-                name: "Планируемое время",
-                value: `${ticket.data.short || "Пусто"}`
+                name: "откуда",
+                value: `${ticket.data.otkuda || "Пусто"}`
             }, {
-                name: "Второй этап",
-                value: `${ticket.data.long || "Пусто"}`
+                name: "кто",
+                value: `${ticket.data.kto || "Пусто"}`
+            }, {
+                name: "сколько",
+                value: `${ticket.data.skolko || "Пусто"}`
             }]
         }]
     });

@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { ChatInputCommandInteraction } from "discord.js";
-import prettyms from "pretty-ms";
+import ms from "ms";
 
 export = {
     options: new SlashCommandBuilder()
@@ -10,7 +10,7 @@ export = {
     permission: 0,
     run: async (interaction: ChatInputCommandInteraction<"cached">) => {
         const server = Date.now() - interaction.createdTimestamp;
-        const uptime = prettyms(interaction.client.uptime);
+        const uptime = ms(interaction.client.uptime);
         const api = interaction.guild.shard.ping;
 
         await interaction.reply({
