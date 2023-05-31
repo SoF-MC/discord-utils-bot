@@ -137,7 +137,6 @@ export const processButton = async (interaction: ButtonInteraction<"cached">) =>
                 title: "Поздравляю!",
                 description: [
                     "Вы были приняты на сервер!",
-                    "Данные для входа:",
                     "Айпи сервера: `soff.pro`"
                 ].join("\n")
             }]
