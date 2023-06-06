@@ -1,4 +1,4 @@
-import { ButtonInteraction, ComponentType, Message, ActionRowBuilder, ButtonBuilder, PermissionFlagsBits, ButtonStyle } from "discord.js";
+import { ButtonInteraction, ComponentType, Message, ActionRowBuilder, ButtonBuilder, PermissionFlagsBits, ButtonStyle, escapeMarkdown } from "discord.js";
 import { getGlobalDocument, getUserDocument, Ticket, User } from "../database";
 import { clearMcColors } from "../constants";
 import { RCON } from "mc-server-utilities";
@@ -126,7 +126,7 @@ export const processButton = async (interaction: ButtonInteraction<"cached">) =>
             const result = await rcon.execute(`easywl add ${ticket.data.nickname}`);
             rcon.close();
 
-            return result;
+            return escapeMarkdown(clearMcColors(result));
         })(), (async () => {
             const rcon = new RCON();
             await rcon.connect(config.rcon.plots.host, config.rcon.plots.port);
@@ -134,14 +134,14 @@ export const processButton = async (interaction: ButtonInteraction<"cached">) =>
             const result = await rcon.execute(`easywl add ${ticket.data.nickname}`);
             rcon.close();
 
-            return result;
+            return escapeMarkdown(clearMcColors(result));
         })()]);
 
         await interaction.editReply([
             "main:",
-            clearMcColors(main),
+            main,
             "plots:",
-            clearMcColors(plots)
+            plots
         ].join("\n"));
 
         await interaction.channel!.send({
