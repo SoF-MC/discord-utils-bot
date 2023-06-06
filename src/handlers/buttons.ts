@@ -129,8 +129,8 @@ export const processButton = async (interaction: ButtonInteraction<"cached">) =>
             return result;
         })(), (async () => {
             const rcon = new RCON();
-            await rcon.connect(config.rcon.main.host, config.rcon.main.port);
-            await rcon.login(config.rcon.main.password);
+            await rcon.connect(config.rcon.plots.host, config.rcon.plots.port);
+            await rcon.login(config.rcon.plots.password);
             const result = await rcon.execute(`easywl add ${ticket.data.nickname}`);
             rcon.close();
 
