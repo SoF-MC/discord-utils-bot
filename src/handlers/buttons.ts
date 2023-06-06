@@ -111,21 +111,38 @@ export const processButton = async (interaction: ButtonInteraction<"cached">) =>
             userDocument.permissions < 2
         ) return await interaction.reply({ content: "❌ У вас недостаточно прав.", ephemeral: true });
 
-        const ticket = (await Ticket.findOne({ channel: interaction.channel!.id }))!;
-
         if (!(await check(interaction))) return;
+
+        const ticket = (await Ticket.findOne({ channel: interaction.channel!.id }))!;
 
         const anotherUserDocument = await getUserDocument(ticket.user);
         anotherUserDocument.nickname = ticket.data.nickname;
         anotherUserDocument.safeSave();
 
-        const rcon = new RCON();
-        await rcon.connect(config.rcon.host, config.rcon.port);
-        await rcon.login(config.rcon.password);
-        const result = await rcon.execute(`easywl add ${ticket.data.nickname}`);
-        rcon.close();
+        const [main, plots] = await Promise.all([(async () => {
+            const rcon = new RCON();
+            await rcon.connect(config.rcon.main.host, config.rcon.main.port);
+            await rcon.login(config.rcon.main.password);
+            const result = await rcon.execute(`easywl add ${ticket.data.nickname}`);
+            rcon.close();
 
-        await interaction.editReply(clearMcColors(result));
+            return result;
+        })(), (async () => {
+            const rcon = new RCON();
+            await rcon.connect(config.rcon.main.host, config.rcon.main.port);
+            await rcon.login(config.rcon.main.password);
+            const result = await rcon.execute(`easywl add ${ticket.data.nickname}`);
+            rcon.close();
+
+            return result;
+        })()]);
+
+        await interaction.editReply([
+            "main:",
+            clearMcColors(main),
+            "plots:",
+            clearMcColors(plots)
+        ].join("\n"));
 
         await interaction.channel!.send({
             content: `<@${ticket.user}>,`,

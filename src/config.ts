@@ -8,8 +8,15 @@ export default {
     hastebinLink: process.env["HASTEBIN_LINK"]!,
 
     rcon: {
-        host: process.env["RCON_HOST"]!,
-        port: parseInt(process.env["RCON_PORT"]!),
-        password: process.env["RCON_PASSWORD"]!
+        main: {
+            host: process.env["RCON_MAIN_HOST"]!,
+            port: parseInt(process.env["RCON_MAIN_PORT"]!),
+            password: process.env["RCON_MAIN_PASSWORD"]!
+        },
+        plots: {
+            host: process.env["RCON_PLOTS_HOST"]!,
+            port: parseInt(process.env["RCON_PLOTS_PORT"]!),
+            password: process.env["RCON_PLOTS_PASSWORD"]!
+        }
     }
 };
