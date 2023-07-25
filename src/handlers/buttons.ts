@@ -229,11 +229,7 @@ export const processButton = async (interaction: ButtonInteraction<"cached">) =>
             }, 5_000));
 
         if (parseInt(age) < 13)
-            return await interaction.editReply("дискорд 13+")
-                .then(() => setTimeout(() => {
-                    interaction.deleteReply().catch(() => null);
-                    message.delete().catch(() => null);
-                }, 5_000));
+            return await interaction.editReply("дискорд 13+");
 
         await message.delete().catch(() => null);
         await interaction.editReply("Возраст принят, обновляю в БД...");
