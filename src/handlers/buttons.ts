@@ -169,39 +169,6 @@ export const processButton = async (interaction: ButtonInteraction<"cached">) =>
 
         await interaction.channel!.delete();
     } else if (buttonId === "tickets:1") {
-        await interaction.reply("У вас есть **10 секунд**, чтобы написать свой возраст в этом канале.");
-        let timeout = setTimeout(() =>
-            interaction.editReply("Время вышло.").then(() => setTimeout(() => interaction.deleteReply().catch(() => null), 5_000)),
-            10_000
-        );
-        const message = (await interaction.channel!.awaitMessages({ filter: (m) => m.author.id === interaction.user.id, max: 1, time: 10_000 })).first();
-        if (!message) return;
-        clearTimeout(timeout);
-        const age = message.content.match(/^[0-9]{2}$/mg)?.[0];
-
-        if (
-            !age ||
-            age.length !== message.content.length
-        ) return await interaction.editReply("Возраст должен состоять из цифр, не менее и не более 2 символов.")
-            .then(() => setTimeout(() => {
-                interaction.deleteReply().catch(() => null);
-                message.delete().catch(() => null);
-            }, 5_000));
-
-        await message.delete().catch(() => null);
-        await interaction.editReply("Возраст принят, обновляю в БД...");
-
-        const ticket = (await Ticket.findOne({ channel: interaction.channel!.id }))!;
-
-        ticket.data.age = parseInt(age);
-
-        await ticket.save();
-
-        await updateMessage(interaction.message);
-        await interaction.editReply("Готово.");
-
-        setTimeout(() => interaction.deleteReply().catch(() => null), 5_000);
-    } else if (buttonId === "tickets:2") {
         await interaction.reply("У вас есть **30 секунд**, чтобы написать свой желаемый никнейм в этом канале.");
         let timeout = setTimeout(() =>
             interaction.editReply("Время вышло.").then(() => setTimeout(() => interaction.deleteReply().catch(() => null), 5_000)),
@@ -210,12 +177,12 @@ export const processButton = async (interaction: ButtonInteraction<"cached">) =>
         const message = (await interaction.channel!.awaitMessages({ filter: (m) => m.author.id === interaction.user.id, max: 1, time: 30_000 })).first();
         if (!message) return;
         clearTimeout(timeout);
-        const nick = message.content?.match(/^[a-zA-Z0-9_]{2,16}$/mg)?.[0];
+        const nick = message.content?.match(/^[a-zA-Z0-9_]{3,16}$/mg)?.[0];
 
         if (
             !nick ||
             nick.length !== message.content.length
-        ) return interaction.editReply("Никнейм должен состоять из латинских букв и цифр, не менее 2 и не более 16 символов.")
+        ) return interaction.editReply("Никнейм должен состоять из латинских букв и цифр, не менее 3 и не более 16 символов.")
             .then(() => setTimeout(() => {
                 interaction.deleteReply().catch(() => null);
                 message.delete().catch(() => null);
@@ -241,8 +208,48 @@ export const processButton = async (interaction: ButtonInteraction<"cached">) =>
         await interaction.editReply("Готово.");
 
         setTimeout(() => interaction.deleteReply().catch(() => null), 5_000);
+    } else if (buttonId === "tickets:2") {
+        await interaction.reply("У вас есть **10 секунд**, чтобы написать свой возраст в этом канале.");
+        let timeout = setTimeout(() =>
+            interaction.editReply("Время вышло.").then(() => setTimeout(() => interaction.deleteReply().catch(() => null), 5_000)),
+            10_000
+        );
+        const message = (await interaction.channel!.awaitMessages({ filter: (m) => m.author.id === interaction.user.id, max: 1, time: 10_000 })).first();
+        if (!message) return;
+        clearTimeout(timeout);
+        const age = message.content.match(/^[0-9]{2}$/mg)?.[0];
+
+        if (
+            !age ||
+            age.length !== message.content.length
+        ) return await interaction.editReply("Возраст должен состоять из цифр, не менее и не более 2 символов.")
+            .then(() => setTimeout(() => {
+                interaction.deleteReply().catch(() => null);
+                message.delete().catch(() => null);
+            }, 5_000));
+
+        if (parseInt(age) < 13)
+            return await interaction.editReply("дискорд 13+")
+                .then(() => setTimeout(() => {
+                    interaction.deleteReply().catch(() => null);
+                    message.delete().catch(() => null);
+                }, 5_000));
+
+        await message.delete().catch(() => null);
+        await interaction.editReply("Возраст принят, обновляю в БД...");
+
+        const ticket = (await Ticket.findOne({ channel: interaction.channel!.id }))!;
+
+        ticket.data.age = parseInt(age);
+
+        await ticket.save();
+
+        await updateMessage(interaction.message);
+        await interaction.editReply("Готово.");
+
+        setTimeout(() => interaction.deleteReply().catch(() => null), 5_000);
     } else if (buttonId === "tickets:3") {
-        await interaction.reply("Откуда Вы узнали о нас? У вас есть 2 минуты.");
+        await interaction.reply("Откуда Вы узнали о нас? Если от друга, от какого именно? У вас есть 2 минуты.");
         let timeout = setTimeout(() =>
             interaction.editReply("Время вышло.").then(() => setTimeout(() => interaction.deleteReply().catch(() => null), 5_000)),
             120_000
@@ -256,7 +263,7 @@ export const processButton = async (interaction: ButtonInteraction<"cached">) =>
 
         if (
             !otkuda ||
-            (otkuda.length > 512 && otkuda.length < 8)
+            (otkuda.length < 8 || otkuda.length > 512)
         ) return await interaction.editReply("Длина ответа должна составлять от 8 до 512 символов.")
             .then(() => setTimeout(() => {
                 interaction.deleteReply().catch(() => null);
@@ -277,41 +284,6 @@ export const processButton = async (interaction: ButtonInteraction<"cached">) =>
         await interaction.editReply("Готово.");
         setTimeout(() => interaction.deleteReply().catch(() => null), 5_000);
     } else if (buttonId === "tickets:4") {
-        await interaction.reply("Кем вы видите себя на сервере? (Строитель, проектировщик, таскатель ресурсов и т.д). У вас есть 10 минут.");
-        let timeout = setTimeout(() =>
-            interaction.editReply("Время вышло.").then(() => setTimeout(() => interaction.deleteReply().catch(() => null), 5_000)),
-            600_000
-        );
-
-        const message = (await interaction.channel!.awaitMessages({ filter: (m) => m.author.id === interaction.user.id, max: 1, time: 600_000 })).first();
-        if (!message) return;
-
-        clearTimeout(timeout);
-        const kto = message.content;
-
-        if (
-            !kto ||
-            (kto.length > 1024 && kto.length < 8)
-        ) return await interaction.editReply("Длина ответа должна составлять от 8 до 1024 символов.")
-            .then(() => setTimeout(() => {
-                interaction.deleteReply().catch(() => null);
-                message.delete().catch(() => null);
-            }, 6_000));
-
-        await message.delete().catch(() => null);
-        await interaction.editReply("Принято, обновляю в БД...");
-
-        const ticket = (await Ticket.findOne({ channel: interaction.channel!.id }))!;
-
-        ticket.data.kto = kto;
-
-        await ticket.save();
-
-        await updateMessage(interaction.message);
-
-        await interaction.editReply("Готово.");
-        setTimeout(() => interaction.deleteReply().catch(() => null), 5_000);
-    } else if (buttonId === "tickets:5") {
         await interaction.reply("Сколько времени Вы готовы уделять серверу? У Вас есть 2 минуты.");
         let timeout = setTimeout(() =>
             interaction.editReply("Время вышло.").then(() => setTimeout(() => interaction.deleteReply().catch(() => null), 5_000)),
@@ -326,7 +298,7 @@ export const processButton = async (interaction: ButtonInteraction<"cached">) =>
 
         if (
             !skolko ||
-            (skolko.length > 512 && skolko.length < 8)
+            (skolko.length < 8 || skolko.length > 512)
         ) return await interaction.editReply("Длина ответа должна составлять от 8 до 512 символов.")
             .then(() => setTimeout(() => {
                 interaction.deleteReply().catch(() => null);
@@ -339,6 +311,41 @@ export const processButton = async (interaction: ButtonInteraction<"cached">) =>
         const ticket = (await Ticket.findOne({ channel: interaction.channel!.id }))!;
 
         ticket.data.skolko = skolko;
+
+        await ticket.save();
+
+        await updateMessage(interaction.message);
+
+        await interaction.editReply("Готово.");
+        setTimeout(() => interaction.deleteReply().catch(() => null), 5_000);
+    } else if (buttonId === "tickets:5") {
+        await interaction.reply("Расскажите о себе (150+ символов). У вас есть 10 минут.");
+        let timeout = setTimeout(() =>
+            interaction.editReply("Время вышло.").then(() => setTimeout(() => interaction.deleteReply().catch(() => null), 5_000)),
+            600_000
+        );
+
+        const message = (await interaction.channel!.awaitMessages({ filter: (m) => m.author.id === interaction.user.id, max: 1, time: 600_000 })).first();
+        if (!message) return;
+
+        clearTimeout(timeout);
+        const kto = message.content;
+
+        if (
+            !kto ||
+            (kto.length < 150 || kto.length > 1800)
+        ) return await interaction.editReply("Длина ответа должна составлять от 150 до 1800 символов.")
+            .then(() => setTimeout(() => {
+                interaction.deleteReply().catch(() => null);
+                message.delete().catch(() => null);
+            }, 6_000));
+
+        await message.delete().catch(() => null);
+        await interaction.editReply("Принято, обновляю в БД...");
+
+        const ticket = (await Ticket.findOne({ channel: interaction.channel!.id }))!;
+
+        ticket.data.kto = kto;
 
         await ticket.save();
 
@@ -366,11 +373,11 @@ async function updateMessage(message: Message<true>) {
                 name: "откуда",
                 value: `${ticket.data.otkuda || "Пусто"}`
             }, {
-                name: "кто",
-                value: `${ticket.data.kto || "Пусто"}`
-            }, {
                 name: "сколько",
                 value: `${ticket.data.skolko || "Пусто"}`
+            }, {
+                name: "кто",
+                value: `${ticket.data.kto || "Пусто"}`
             }]
         }]
     });
