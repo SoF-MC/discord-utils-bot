@@ -376,7 +376,7 @@ async function updateMessage(message: Message<true>) {
                 name: "сколько",
                 value: `${ticket.data.skolko || "Пусто"}`
             }, {
-                name: "кто",
+                name: "о себе",
                 value: `${ticket.data.kto || "Пусто"}`
             }]
         }]
