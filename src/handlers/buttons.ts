@@ -119,29 +119,17 @@ export const processButton = async (interaction: ButtonInteraction<"cached">) =>
         anotherUserDocument.nickname = ticket.data.nickname;
         anotherUserDocument.safeSave();
 
-        const [main, plots] = await Promise.all([(async () => {
-            const rcon = new RCON();
-            await rcon.connect(config.rcon.main.host, config.rcon.main.port);
-            await rcon.login(config.rcon.main.password);
-            const result = await rcon.execute(`easywl add ${ticket.data.nickname}`);
-            rcon.close();
+        const rcon = new RCON();
+        await rcon.connect(config.rcon.main.host, config.rcon.main.port);
+        await rcon.login(config.rcon.main.password);
+        const result = await rcon.execute(`easywl add ${ticket.data.nickname}`);
+        rcon.close();
 
-            return escapeMarkdown(clearMcColors(result));
-        })(), (async () => {
-            const rcon = new RCON();
-            await rcon.connect(config.rcon.plots.host, config.rcon.plots.port);
-            await rcon.login(config.rcon.plots.password);
-            const result = await rcon.execute(`easywl add ${ticket.data.nickname}`);
-            rcon.close();
-
-            return escapeMarkdown(clearMcColors(result));
-        })()]);
+        const main = escapeMarkdown(clearMcColors(result));
 
         await interaction.editReply([
             "main:",
-            main,
-            "plots:",
-            plots
+            main
         ].join("\n"));
 
         await interaction.channel!.send({
