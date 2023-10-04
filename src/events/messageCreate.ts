@@ -24,6 +24,9 @@ export async function run(message: Message<true>) {
         fs.appendFileSync(filename, words.map(escapeString).join(" ") + " ");
     }
 
+    console.log(path.join("databases", `wordsdb_${message.guildId}.txt`));
+    console.log(fs.existsSync(filename));
+
     const handleCounter = async () => {
         counter++;
         if (counter >= 25) {
