@@ -14,6 +14,15 @@ export = {
         .toJSON(),
     permission: 5,
     run: async (interaction: ChatInputCommandInteraction<"cached">) => {
+        if (interaction.guildId !== "764178286233518100")
+            return interaction.reply({
+                embeds: [
+                    {
+                        description: "Ало, ты не на софе 🗣️",
+                    },
+                ],
+            });
+
         const channel: GuildTextBasedChannel =
             (interaction.options.getChannel("channel") as any) || interaction.channel;
         await interaction.deferReply();
