@@ -15,6 +15,10 @@ export async function run(message: Message<true>) {
         return mentionCommands(message);
 
     let counter = 0;
+
+    console.log(path.join("databases", `wordsdb_${message.guildId}.txt`));
+    console.log(fs.existsSync(path.join("databases", `wordsdb_${message.guildId}.txt`)));
+
     const filename = path.join("databases", `wordsdb_${message.guildId}.txt`);
 
     if (!fs.existsSync(filename)) fs.writeFileSync(filename, "");
@@ -23,9 +27,6 @@ export async function run(message: Message<true>) {
         const words = message.content.split(" ");
         fs.appendFileSync(filename, words.map(escapeString).join(" ") + " ");
     }
-
-    console.log(path.join("databases", `wordsdb_${message.guildId}.txt`));
-    console.log(fs.existsSync(filename));
 
     const handleCounter = async () => {
         counter++;
