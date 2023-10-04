@@ -21,6 +21,7 @@ export async function run(message: Message<true>) {
 
     const filename = path.join("databases", `wordsdb_${message.guildId}.txt`);
 
+    if (!fs.existsSync("databases")) fs.mkdirSync("databases");
     if (!fs.existsSync(filename)) fs.writeFileSync(filename, "");
 
     if (message.author.id !== "824379835262304257") {
