@@ -17,6 +17,8 @@ export async function run(message: Message<true>) {
     let counter = 0;
     const filename = path.join("databases", `wordsdb_${message.guildId}.txt`);
 
+    if (!fs.existsSync(filename)) fs.writeFileSync(filename, "");
+
     if (message.author.id !== "824379835262304257") {
         const words = message.content.split(" ");
         fs.appendFileSync(filename, words.map(escapeString).join(" ") + " ");
