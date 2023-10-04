@@ -6,8 +6,8 @@ export default function (message: Message<true>) {
     let commandFile;
     try {
         commandFile = require(`../commands/mention/${command}`);
-    } catch { };
+    } catch {}
     if (!commandFile) return;
 
     commandFile.run(message, args);
-};
+}

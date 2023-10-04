@@ -9,7 +9,7 @@ class UserSchema {
     @prop({ type: Number, default: 0 }) permissions!: number;
 
     safeSave(this: UserDocument): void {
-        if (state) return state = 2, void 0;
+        if (state) return (state = 2), void 0;
 
         state = 1;
         return void this.save().then(() => {
@@ -18,8 +18,8 @@ class UserSchema {
                 this.safeSave();
             } else state = 0;
         });
-    };
-};
+    }
+}
 
 export type UserDocument = DocumentType<UserSchema>;
 

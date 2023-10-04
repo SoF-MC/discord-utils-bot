@@ -1,10 +1,6 @@
 {
-    "extends": [
-        "config:base"
-    ],
-    "additionalReviewers": [
-        "itzJOHv"
-    ],
+    "extends": ["config:base"],
+    "additionalReviewers": ["itzJOHv"],
     "schedule": "at any time",
     "lockFileMaintenance": {
         "enabled": true,

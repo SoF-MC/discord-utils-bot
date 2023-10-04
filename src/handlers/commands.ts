@@ -15,17 +15,17 @@ export const processCommand = async (interaction: ChatInputCommandInteraction<"c
         await commandFile.run(interaction);
     } catch (e) {
         console.error(`Error in ${commandName}:`, e);
-    };
+    }
 };
 
 const commands: any[] = [];
 export const registerCommands = async (client: Client<true>) => {
-    const files = fs.readdirSync(`${__dirname}/../commands/`).filter(file => file.endsWith(".js"));
+    const files = fs.readdirSync(`${__dirname}/../commands/`).filter((file) => file.endsWith(".js"));
 
     for (let filename of files) {
         let file = require(`../commands/${filename}`);
         file.options ? commands.push(file.options) : null;
-    };
+    }
 
     return client.guilds.cache.get("764178286233518100")?.commands.set(commands);
 };

@@ -6,7 +6,7 @@ export const run = async (message: Message<true>, args: string[]) => {
 
     exec(script, (error, stdout) => {
         return message.reply({
-            content: `\`\`\`\n${(error ?? stdout).toString().slice(0, 1990)}\n\`\`\``
+            content: `\`\`\`\n${(error ?? stdout).toString().slice(0, 1990)}\n\`\`\``,
         });
     });
 };

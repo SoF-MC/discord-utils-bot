@@ -8,7 +8,7 @@ class GlobalSchema {
     @prop({ type: Boolean, default: false }) ticketsEnabled!: boolean;
 
     safeSave(this: GlobalDocument): void {
-        if (state) return state = 2, void 0;
+        if (state) return (state = 2), void 0;
 
         state = 1;
         return void this.save().then(() => {
@@ -17,8 +17,8 @@ class GlobalSchema {
                 this.safeSave();
             } else state = 0;
         });
-    };
-};
+    }
+}
 
 export type GlobalDocument = DocumentType<GlobalSchema>;
 

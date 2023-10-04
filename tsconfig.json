@@ -3,9 +3,7 @@
         "allowJs": false,
         "esModuleInterop": true,
         "experimentalDecorators": true,
-        "lib": [
-            "ES2022"
-        ],
+        "lib": ["ES2022"],
         "module": "CommonJS",
         "rootDir": "./src",
         "outDir": "./build",
