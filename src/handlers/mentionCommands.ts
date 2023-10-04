@@ -1,4 +1,4 @@
-import { Message } from "discord.js";
+import type { Message } from "discord.js";
 
 export default function (message: Message<true>) {
     const [command, ...args] = message.content.slice(`<@${message.client.user.id}>`.length).trim().split(" ");

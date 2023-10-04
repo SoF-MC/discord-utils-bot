@@ -1,4 +1,4 @@
-import { GuildMember } from "discord.js";
+import type { GuildMember } from "discord.js";
 
 export async function run(oldMember: GuildMember, newMember: GuildMember) {
     if (oldMember.guild.id !== "764178286233518100") return;

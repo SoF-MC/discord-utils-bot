@@ -1,4 +1,4 @@
-import { GuildMember, TextChannel } from "discord.js";
+import type { GuildMember, TextChannel } from "discord.js";
 
 export async function run(member: GuildMember) {
     if (member.guild.id !== "764178286233518100") return;

@@ -1,4 +1,4 @@
-import { Message } from "discord.js";
+import type { Message } from "discord.js";
 import mentionCommands from "../handlers/mentionCommands";
 import config from "../config";
 

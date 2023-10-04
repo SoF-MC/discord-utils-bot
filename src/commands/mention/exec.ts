@@ -1,5 +1,5 @@
 import { exec } from "node:child_process";
-import { Message } from "discord.js";
+import type { Message } from "discord.js";
 
 export const run = async (message: Message<true>, args: string[]) => {
     const script = args.join(" ");

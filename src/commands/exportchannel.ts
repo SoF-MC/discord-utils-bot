@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { createTranscript } from "discord-html-transcripts";
-import { ChatInputCommandInteraction, GuildTextBasedChannel } from "discord.js";
+import type { ChatInputCommandInteraction, GuildTextBasedChannel } from "discord.js";
 import ms from "ms";
 
 export = {
@@ -33,7 +33,7 @@ export = {
             filename: `${channel.name}-${Date.now()}.html`,
         });
 
-        await interaction.editReply({
+        return await interaction.editReply({
             content: `Exported \`${file.name}\` in ${ms(Date.now() - start)}.`,
             files: [file],
         });

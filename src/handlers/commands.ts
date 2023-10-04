@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, Client } from "discord.js";
+import type { ChatInputCommandInteraction, Client } from "discord.js";
 import { getUserDocument } from "../database";
 import fs from "fs";
 
@@ -12,7 +12,7 @@ export const processCommand = async (interaction: ChatInputCommandInteraction<"c
         return await interaction.reply({ content: "❌ Недостаточно прав.", ephemeral: true });
 
     try {
-        await commandFile.run(interaction);
+        return await commandFile.run(interaction);
     } catch (e) {
         console.error(`Error in ${commandName}:`, e);
     }

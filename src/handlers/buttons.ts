@@ -82,9 +82,9 @@ export const processButton = async (interaction: ButtonInteraction<"cached">) =>
 
             await ticket.updateOne({ $set: { originalMessage: originalMessage.id } });
 
-            await interaction.editReply("Готово!");
+            return await interaction.editReply("Готово!");
         } else
-            await interaction.reply({
+            return await interaction.reply({
                 content: "У вас уже есть заявка",
                 ephemeral: true,
             });
@@ -97,7 +97,7 @@ export const processButton = async (interaction: ButtonInteraction<"cached">) =>
         await interaction.message.delete().catch(() => null);
         await interaction.channel!.permissionOverwrites.create(ticket.user, { ViewChannel: true });
 
-        await ticket.updateOne({ $set: { closed: false } });
+        return await ticket.updateOne({ $set: { closed: false } });
     } else if (buttonId === "tickets:close") {
         if (userDocument.permissions < 2)
             return await interaction.reply({ content: "❌ У вас недостаточно прав.", ephemeral: true });
@@ -121,7 +121,7 @@ export const processButton = async (interaction: ButtonInteraction<"cached">) =>
             ],
         });
 
-        await ticket.updateOne({ $set: { closed: true } });
+        return await ticket.updateOne({ $set: { closed: true } });
     } else if (buttonId === "tickets:accept") {
         if (userDocument.permissions < 2)
             return await interaction.reply({ content: "❌ У вас недостаточно прав.", ephemeral: true });
@@ -158,14 +158,16 @@ export const processButton = async (interaction: ButtonInteraction<"cached">) =>
             ],
         });
 
-        await interaction.guild.members.addRole({ user: ticket.user, role: "791657594228965377" }).catch(() => null);
+        return await interaction.guild.members
+            .addRole({ user: ticket.user, role: "791657594228965377" })
+            .catch(() => null);
     } else if (buttonId === "tickets:delete") {
         if (userDocument.permissions < 2)
             return await interaction.reply({ content: "❌ У вас недостаточно прав.", ephemeral: true });
 
         await Ticket.deleteOne({ channel: interaction.channel!.id });
 
-        await interaction.channel!.delete();
+        return await interaction.channel!.delete();
     } else if (buttonId === "tickets:1") {
         await interaction.reply("У вас есть **30 секунд**, чтобы написать свой желаемый никнейм в этом канале.");
         let timeout = setTimeout(
