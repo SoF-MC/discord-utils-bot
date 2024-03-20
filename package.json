@@ -35,6 +35,6 @@
         "@types/ms": "^0.7.31",
         "@types/node": "^18.11.18",
         "tsc-watch": "^6.0.4",
-        "typescript": "5.0.4"
+        "typescript": "5.4.3"
     }
 }
